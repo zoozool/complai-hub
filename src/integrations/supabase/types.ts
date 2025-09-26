@@ -14,7 +14,207 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      complaints: {
+        Row: {
+          completion_date: string | null
+          created_at: string
+          damage_description: string
+          device_serial_number: string
+          device_type: string
+          diagnosis: string | null
+          express_repair: boolean
+          id: string
+          incoming_tracking_number: string | null
+          internal_complaint_number: string | null
+          invoice_data: string | null
+          outgoing_tracking_number: string | null
+          package_adapter: boolean
+          package_device: boolean
+          package_mount: boolean
+          package_original_packaging: boolean
+          package_receipt_copy: boolean
+          package_usb_cable: boolean
+          repair_cost: number | null
+          reported_problem: string | null
+          return_city: string
+          return_email: string
+          return_first_name: string
+          return_last_name: string
+          return_phone: string
+          return_postal_code: string
+          return_street: string
+          screen_protection_foil: boolean
+          submission_date: string
+          updated_at: string
+          user_id: string
+          warranty_repair: boolean
+        }
+        Insert: {
+          completion_date?: string | null
+          created_at?: string
+          damage_description: string
+          device_serial_number: string
+          device_type: string
+          diagnosis?: string | null
+          express_repair?: boolean
+          id?: string
+          incoming_tracking_number?: string | null
+          internal_complaint_number?: string | null
+          invoice_data?: string | null
+          outgoing_tracking_number?: string | null
+          package_adapter?: boolean
+          package_device?: boolean
+          package_mount?: boolean
+          package_original_packaging?: boolean
+          package_receipt_copy?: boolean
+          package_usb_cable?: boolean
+          repair_cost?: number | null
+          reported_problem?: string | null
+          return_city: string
+          return_email: string
+          return_first_name: string
+          return_last_name: string
+          return_phone: string
+          return_postal_code: string
+          return_street: string
+          screen_protection_foil?: boolean
+          submission_date?: string
+          updated_at?: string
+          user_id: string
+          warranty_repair?: boolean
+        }
+        Update: {
+          completion_date?: string | null
+          created_at?: string
+          damage_description?: string
+          device_serial_number?: string
+          device_type?: string
+          diagnosis?: string | null
+          express_repair?: boolean
+          id?: string
+          incoming_tracking_number?: string | null
+          internal_complaint_number?: string | null
+          invoice_data?: string | null
+          outgoing_tracking_number?: string | null
+          package_adapter?: boolean
+          package_device?: boolean
+          package_mount?: boolean
+          package_original_packaging?: boolean
+          package_receipt_copy?: boolean
+          package_usb_cable?: boolean
+          repair_cost?: number | null
+          reported_problem?: string | null
+          return_city?: string
+          return_email?: string
+          return_first_name?: string
+          return_last_name?: string
+          return_phone?: string
+          return_postal_code?: string
+          return_street?: string
+          screen_protection_foil?: boolean
+          submission_date?: string
+          updated_at?: string
+          user_id?: string
+          warranty_repair?: boolean
+        }
+        Relationships: []
+      }
+      pickup_requests: {
+        Row: {
+          address: string
+          company_name: string
+          created_at: string
+          id: string
+          requested_date: string
+          scheduled_date: string | null
+          service_contact_email: string
+          service_contact_phone: string
+          status: string
+          updated_at: string
+          user_id: string
+          vat_id: string
+        }
+        Insert: {
+          address: string
+          company_name: string
+          created_at?: string
+          id?: string
+          requested_date?: string
+          scheduled_date?: string | null
+          service_contact_email: string
+          service_contact_phone: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          vat_id: string
+        }
+        Update: {
+          address?: string
+          company_name?: string
+          created_at?: string
+          id?: string
+          requested_date?: string
+          scheduled_date?: string | null
+          service_contact_email?: string
+          service_contact_phone?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          vat_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          company_address: string | null
+          company_name: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone_number: string | null
+          service_contact_email: string | null
+          service_contact_phone: string | null
+          updated_at: string
+          user_id: string
+          user_type: string
+          vat_id: string | null
+        }
+        Insert: {
+          company_address?: string | null
+          company_name?: string | null
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone_number?: string | null
+          service_contact_email?: string | null
+          service_contact_phone?: string | null
+          updated_at?: string
+          user_id: string
+          user_type: string
+          vat_id?: string | null
+        }
+        Update: {
+          company_address?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone_number?: string | null
+          service_contact_email?: string | null
+          service_contact_phone?: string | null
+          updated_at?: string
+          user_id?: string
+          user_type?: string
+          vat_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
