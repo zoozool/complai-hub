@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       complaints: {
         Row: {
+          assigned_technician_id: string | null
           completion_date: string | null
           created_at: string
           damage_description: string
@@ -44,12 +45,15 @@ export type Database = {
           return_postal_code: string
           return_street: string
           screen_protection_foil: boolean
+          service_notes: string | null
+          status: Database["public"]["Enums"]["complaint_status"] | null
           submission_date: string
           updated_at: string
           user_id: string
           warranty_repair: boolean
         }
         Insert: {
+          assigned_technician_id?: string | null
           completion_date?: string | null
           created_at?: string
           damage_description: string
@@ -78,12 +82,15 @@ export type Database = {
           return_postal_code: string
           return_street: string
           screen_protection_foil?: boolean
+          service_notes?: string | null
+          status?: Database["public"]["Enums"]["complaint_status"] | null
           submission_date?: string
           updated_at?: string
           user_id: string
           warranty_repair?: boolean
         }
         Update: {
+          assigned_technician_id?: string | null
           completion_date?: string | null
           created_at?: string
           damage_description?: string
@@ -112,6 +119,8 @@ export type Database = {
           return_postal_code?: string
           return_street?: string
           screen_protection_foil?: boolean
+          service_notes?: string | null
+          status?: Database["public"]["Enums"]["complaint_status"] | null
           submission_date?: string
           updated_at?: string
           user_id?: string
@@ -215,15 +224,55 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "main_administrator" | "employee" | "service_technician"
+      complaint_status:
+        | "submitted"
+        | "in_progress"
+        | "completed"
+        | "awaiting_shipment"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -350,6 +399,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["main_administrator", "employee", "service_technician"],
+      complaint_status: [
+        "submitted",
+        "in_progress",
+        "completed",
+        "awaiting_shipment",
+        "cancelled",
+      ],
+    },
   },
 } as const
