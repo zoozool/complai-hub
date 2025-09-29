@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import NewComplaint from "./pages/NewComplaint";
 import ComplaintDetails from "./pages/ComplaintDetails";
+import SchedulePickup from "./pages/SchedulePickup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/new-complaint" element={<NewComplaint />} />
             <Route path="/complaint/:id" element={<ComplaintDetails />} />
+            <Route path="/schedule-pickup" element={<SchedulePickup />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
