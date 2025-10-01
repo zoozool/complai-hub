@@ -61,9 +61,14 @@ export function EditComplaintDialog({
     try {
       const updateData: any = {};
 
-      // Admins can update everything, technicians can only update specific fields
+      // Admins can update everything, technicians can update status to in_progress or completed
       if (isAdmin) {
         updateData.status = formData.status;
+      } else if (isTechnician) {
+        // Technicians can only update status to in_progress or completed
+        if (formData.status === 'in_progress' || formData.status === 'completed') {
+          updateData.status = formData.status;
+        }
       }
 
       if (isAdmin || isTechnician) {
@@ -117,7 +122,7 @@ export function EditComplaintDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {isAdmin && (
+          {(isAdmin || isTechnician) && (
             <div>
               <Label htmlFor="status">Status</Label>
               <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
@@ -125,11 +130,11 @@ export function EditComplaintDialog({
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="submitted">Submitted</SelectItem>
+                  {isAdmin && <SelectItem value="submitted">Submitted</SelectItem>}
                   <SelectItem value="in_progress">In Progress</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="awaiting_shipment">Awaiting Shipment</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                  {isAdmin && <SelectItem value="awaiting_shipment">Awaiting Shipment</SelectItem>}
+                  {isAdmin && <SelectItem value="cancelled">Cancelled</SelectItem>}
                 </SelectContent>
               </Select>
             </div>
