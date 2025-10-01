@@ -119,6 +119,7 @@ export default function UserManagement() {
                   <TableHead>Phone</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Role</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -137,6 +138,11 @@ export default function UserManagement() {
                     </TableCell>
                     <TableCell>
                       <Badge>{getUserRole(user)}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={user.is_active ? "default" : "secondary"}>
+                        {user.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
