@@ -1,7 +1,8 @@
 import { useAuth } from '@/hooks/useAuth';
+import { useRole } from '@/hooks/useRole';
 import { Button } from '@/components/ui/button';
 import { Navigate } from 'react-router-dom';
-import { LogOut, Plus, Truck, FileText, Shield, Building, User } from 'lucide-react';
+import { LogOut, Plus, Truck, FileText, Shield, Building, User, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface DashboardLayoutProps {
@@ -10,6 +11,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user, userProfile, signOut, loading } = useAuth();
+  const { isAdmin, isEmployee, isTechnician } = useRole();
   const navigate = useNavigate();
 
   if (loading) {
@@ -105,6 +107,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               >
                 <Truck className="h-4 w-4" />
                 <span>Schedule Pickup</span>
+              </Button>
+            )}
+
+            {(isAdmin() || isEmployee() || isTechnician()) && (
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/admin/dashboard')}
+                className="flex items-center space-x-2"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Admin Panel</span>
               </Button>
             )}
           </div>
