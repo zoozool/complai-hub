@@ -29,7 +29,7 @@ export default function AdminDashboard() {
         .from('complaints')
         .select(`
           *,
-          profiles!inner(first_name, last_name, company_name, user_type),
+          profiles!complaints_user_id_fkey(first_name, last_name, company_name, user_type),
           technician:profiles!complaints_assigned_technician_id_fkey(first_name, last_name)
         `)
         .order('submission_date', { ascending: false });
