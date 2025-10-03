@@ -61,7 +61,7 @@ export default function UserManagement() {
     if (isAdmin()) {
       fetchUsers();
     }
-  }, [searchTerm, isAdmin]);
+  }, [searchTerm]);
 
   const getUserType = (user: any) => {
     if (user.user_type === 'individual') return 'Individual';
