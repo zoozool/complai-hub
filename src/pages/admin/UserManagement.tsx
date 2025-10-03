@@ -13,7 +13,7 @@ import { EditUserDialog } from "@/components/admin/EditUserDialog";
 import { AssignRoleDialog } from "@/components/admin/AssignRoleDialog";
 
 export default function UserManagement() {
-  const { isAdmin } = useRole();
+  const { isAdmin, loading: roleLoading } = useRole();
   const { toast } = useToast();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,10 +58,10 @@ export default function UserManagement() {
   };
 
   useEffect(() => {
-    if (isAdmin()) {
+    if (!roleLoading && isAdmin()) {
       fetchUsers();
     }
-  }, [searchTerm]);
+  }, [searchTerm, roleLoading]);
 
   const getUserType = (user: any) => {
     if (user.user_type === 'individual') return 'Individual';
@@ -73,6 +73,16 @@ export default function UserManagement() {
     if (!user.user_roles || user.user_roles.length === 0) return 'No Role';
     return user.user_roles[0].role.replace('_', ' ').toUpperCase();
   };
+
+  if (roleLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   if (!isAdmin()) {
     return (
