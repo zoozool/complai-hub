@@ -27,11 +27,7 @@ export default function AdminDashboard() {
       setLoading(true);
       let query = supabase
         .from('complaints')
-        .select(`
-          *,
-          profiles!complaints_user_id_fkey(first_name, last_name, company_name, user_type),
-          technician:profiles!complaints_assigned_technician_id_fkey(first_name, last_name)
-        `)
+        .select(`*`)
         .order('submission_date', { ascending: false });
 
       // Apply role-based filtering
@@ -44,9 +40,9 @@ export default function AdminDashboard() {
         query = query.or(`
           device_serial_number.ilike.%${searchTerm}%,
           internal_complaint_number.ilike.%${searchTerm}%,
-          profiles.first_name.ilike.%${searchTerm}%,
-          profiles.last_name.ilike.%${searchTerm}%,
-          profiles.company_name.ilike.%${searchTerm}%
+          return_first_name.ilike.%${searchTerm}%,
+          return_last_name.ilike.%${searchTerm}%,
+          return_email.ilike.%${searchTerm}%
         `);
       }
 

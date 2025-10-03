@@ -48,7 +48,10 @@ export function ComplaintTable({ complaints, onRefresh, userRole }: ComplaintTab
     if (profile?.company_name) {
       return profile.company_name;
     }
-    return `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || 'N/A';
+    const nameFromProfile = `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim();
+    if (nameFromProfile) return nameFromProfile;
+    const nameFromReturn = `${complaint.return_first_name || ''} ${complaint.return_last_name || ''}`.trim();
+    return nameFromReturn || 'N/A';
   };
 
   const getTechnicianName = (complaint: any) => {
