@@ -88,12 +88,12 @@ export function AssignRoleDialog({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="role">Role</Label>
-            <Select value={selectedRole} onValueChange={setSelectedRole}>
+            <Select value={selectedRole || "none"} onValueChange={(value) => setSelectedRole(value === "none" ? "" : value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No Role (Regular User)</SelectItem>
+                <SelectItem value="none">No Role (Regular User)</SelectItem>
                 <SelectItem value="main_administrator">Main Administrator</SelectItem>
                 <SelectItem value="employee">Employee</SelectItem>
                 <SelectItem value="service_technician">Service Technician</SelectItem>

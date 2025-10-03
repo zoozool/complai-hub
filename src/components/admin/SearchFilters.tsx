@@ -88,12 +88,12 @@ export function SearchFilters({
             />
           </div>
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={statusFilter || "all"} onValueChange={(value) => setStatusFilter(value === "all" ? "" : value)}>
             <SelectTrigger>
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Statuses</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="submitted">Submitted</SelectItem>
               <SelectItem value="in_progress">In Progress</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
@@ -103,12 +103,12 @@ export function SearchFilters({
           </Select>
 
           {showTechnicianFilter && (
-            <Select value={technicianFilter} onValueChange={setTechnicianFilter}>
+            <Select value={technicianFilter || "all"} onValueChange={(value) => setTechnicianFilter(value === "all" ? "" : value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Assigned Technician" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Technicians</SelectItem>
+                <SelectItem value="all">All Technicians</SelectItem>
                 <SelectItem value="unassigned">Unassigned</SelectItem>
                 {technicians.map((tech: any) => (
                   <SelectItem key={tech.user_id} value={tech.user_id}>

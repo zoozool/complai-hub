@@ -93,12 +93,12 @@ export function AssignTechnicianDialog({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="technician">Select Technician</Label>
-            <Select value={selectedTechnician} onValueChange={setSelectedTechnician}>
+            <Select value={selectedTechnician || "unassign"} onValueChange={(value) => setSelectedTechnician(value === "unassign" ? "" : value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Choose a technician" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Unassign</SelectItem>
+                <SelectItem value="unassign">Unassign</SelectItem>
                 {technicians.map((tech: any) => (
                   <SelectItem key={tech.user_id} value={tech.user_id}>
                     {tech.profiles.first_name} {tech.profiles.last_name}
