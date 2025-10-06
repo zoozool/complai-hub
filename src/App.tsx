@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import NewComplaint from "./pages/NewComplaint";
 import ComplaintDetails from "./pages/ComplaintDetails";
 import SchedulePickup from "./pages/SchedulePickup";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/new-complaint" element={<NewComplaint />} />
             <Route path="/complaint/:id" element={<ComplaintDetails />} />
             <Route path="/schedule-pickup" element={<SchedulePickup />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/assignments" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagement />} />

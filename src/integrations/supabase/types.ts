@@ -175,8 +175,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          city: string | null
           company_address: string | null
           company_name: string | null
+          country: string | null
           created_at: string
           email: string
           first_name: string | null
@@ -184,16 +186,20 @@ export type Database = {
           is_active: boolean
           last_name: string | null
           phone_number: string | null
+          postal_code: string | null
           service_contact_email: string | null
           service_contact_phone: string | null
+          street: string | null
           updated_at: string
           user_id: string
           user_type: string
           vat_id: string | null
         }
         Insert: {
+          city?: string | null
           company_address?: string | null
           company_name?: string | null
+          country?: string | null
           created_at?: string
           email: string
           first_name?: string | null
@@ -201,16 +207,20 @@ export type Database = {
           is_active?: boolean
           last_name?: string | null
           phone_number?: string | null
+          postal_code?: string | null
           service_contact_email?: string | null
           service_contact_phone?: string | null
+          street?: string | null
           updated_at?: string
           user_id: string
           user_type: string
           vat_id?: string | null
         }
         Update: {
+          city?: string | null
           company_address?: string | null
           company_name?: string | null
+          country?: string | null
           created_at?: string
           email?: string
           first_name?: string | null
@@ -218,8 +228,10 @@ export type Database = {
           is_active?: boolean
           last_name?: string | null
           phone_number?: string | null
+          postal_code?: string | null
           service_contact_email?: string | null
           service_contact_phone?: string | null
+          street?: string | null
           updated_at?: string
           user_id?: string
           user_type?: string

@@ -2,7 +2,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRole } from '@/hooks/useRole';
 import { Button } from '@/components/ui/button';
 import { Navigate } from 'react-router-dom';
-import { LogOut, Plus, Truck, FileText, Shield, Building, User, Settings } from 'lucide-react';
+import { LogOut, Plus, Truck, FileText, Shield, Building, User, Settings, UserCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface DashboardLayoutProps {
@@ -109,6 +109,15 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <span>Schedule Pickup</span>
               </Button>
             )}
+
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/profile')}
+              className="flex items-center space-x-2"
+            >
+              <UserCircle className="h-4 w-4" />
+              <span>My Profile</span>
+            </Button>
 
             {(isAdmin() || isEmployee() || isTechnician()) && (
               <Button
