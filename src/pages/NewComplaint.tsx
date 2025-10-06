@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -29,14 +29,16 @@ const NewComplaint = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
+  const [serviceOptions, setServiceOptions] = useState<any[]>([]);
+  const [packageContents, setPackageContents] = useState<any[]>([]);
+  const [selectedServices, setSelectedServices] = useState<Record<string, boolean>>({});
+  const [selectedPackages, setSelectedPackages] = useState<Record<string, boolean>>({});
 
   const isBusinessPartner = userProfile?.user_type === 'business_partner';
 
   const [formData, setFormData] = useState({
     warrantyRepair: false,
-    expressRepair: false,
     deviceType: '',
-    screenProtection: false,
     deviceSerialNumber: '',
     damageDescription: '',
     returnFirstName: userProfile?.first_name || '',
@@ -46,15 +48,27 @@ const NewComplaint = () => {
     returnCity: '',
     returnPhone: userProfile?.phone_number || '',
     returnEmail: userProfile?.email || '',
-    packageDevice: false,
-    packageOriginalPackaging: false,
-    packageMount: false,
-    packageAdapter: false,
-    packageUsbCable: false,
-    packageReceiptCopy: false,
     acceptedTerms: false,
     internalComplaintNumber: '',
   });
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const [servicesRes, packagesRes] = await Promise.all([
+          supabase.from('service_options').select('*').eq('is_active', true).order('display_order'),
+          supabase.from('package_contents').select('*').eq('is_active', true).order('display_order')
+        ]);
+
+        if (servicesRes.data) setServiceOptions(servicesRes.data);
+        if (packagesRes.data) setPackageContents(packagesRes.data);
+      } catch (error) {
+        console.error('Error fetching options:', error);
+      }
+    };
+
+    fetchOptions();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,14 +94,19 @@ const NewComplaint = () => {
     setLoading(true);
 
     try {
+      // Build package content fields dynamically
+      const packageData: Record<string, boolean> = {};
+      packageContents.forEach((item) => {
+        const fieldKey = `package_${item.name.toLowerCase().replace(/\s+/g, '_')}`;
+        packageData[fieldKey] = selectedPackages[item.id] || false;
+      });
+
       const complaintData = {
         user_id: userProfile?.user_id,
         device_type: formData.deviceType,
         device_serial_number: formData.deviceSerialNumber,
         damage_description: formData.damageDescription,
         warranty_repair: formData.warrantyRepair,
-        express_repair: formData.expressRepair,
-        screen_protection_foil: formData.screenProtection,
         return_first_name: formData.returnFirstName,
         return_last_name: formData.returnLastName,
         return_street: formData.returnStreet,
@@ -95,12 +114,7 @@ const NewComplaint = () => {
         return_city: formData.returnCity,
         return_phone: formData.returnPhone,
         return_email: formData.returnEmail,
-        package_device: formData.packageDevice,
-        package_original_packaging: formData.packageOriginalPackaging,
-        package_mount: formData.packageMount,
-        package_adapter: formData.packageAdapter,
-        package_usb_cable: formData.packageUsbCable,
-        package_receipt_copy: formData.packageReceiptCopy,
+        ...packageData,
         ...(isBusinessPartner && formData.internalComplaintNumber && {
           internal_complaint_number: formData.internalComplaintNumber,
         }),
@@ -240,27 +254,20 @@ const NewComplaint = () => {
                     <Label htmlFor="warrantyRepair">Warranty Repair</Label>
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="expressRepair"
-                      checked={formData.expressRepair}
-                      onCheckedChange={(checked) => 
-                        setFormData(prev => ({ ...prev, expressRepair: !!checked }))
-                      }
-                    />
-                    <Label htmlFor="expressRepair">Express Repair (+99 zł)</Label>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="screenProtection"
-                      checked={formData.screenProtection}
-                      onCheckedChange={(checked) => 
-                        setFormData(prev => ({ ...prev, screenProtection: !!checked }))
-                      }
-                    />
-                    <Label htmlFor="screenProtection">Screen Protection Foil Service (+49 zł)</Label>
-                  </div>
+                  {serviceOptions.map((option) => (
+                    <div key={option.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`service-${option.id}`}
+                        checked={selectedServices[option.id] || false}
+                        onCheckedChange={(checked) => 
+                          setSelectedServices(prev => ({ ...prev, [option.id]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`service-${option.id}`}>
+                        {option.name} (+{option.price.toFixed(2)} zł)
+                      </Label>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -372,23 +379,16 @@ const NewComplaint = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { id: 'packageDevice', label: 'Device', key: 'packageDevice' },
-                  { id: 'packageOriginalPackaging', label: 'Original Packaging', key: 'packageOriginalPackaging' },
-                  { id: 'packageMount', label: 'Mount', key: 'packageMount' },
-                  { id: 'packageAdapter', label: 'Adapter', key: 'packageAdapter' },
-                  { id: 'packageUsbCable', label: 'USB Cable', key: 'packageUsbCable' },
-                  { id: 'packageReceiptCopy', label: 'Purchase Receipt Copy', key: 'packageReceiptCopy' },
-                ].map((item) => (
+                {packageContents.map((item) => (
                   <div key={item.id} className="flex items-center space-x-2">
                     <Checkbox
-                      id={item.id}
-                      checked={formData[item.key as keyof typeof formData] as boolean}
+                      id={`package-${item.id}`}
+                      checked={selectedPackages[item.id] || false}
                       onCheckedChange={(checked) => 
-                        setFormData(prev => ({ ...prev, [item.key]: !!checked }))
+                        setSelectedPackages(prev => ({ ...prev, [item.id]: !!checked }))
                       }
                     />
-                    <Label htmlFor={item.id}>{item.label}</Label>
+                    <Label htmlFor={`package-${item.id}`}>{item.name}</Label>
                   </div>
                 ))}
               </div>

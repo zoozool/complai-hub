@@ -24,6 +24,10 @@ export function CreateComplaintDialog({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
+  const [serviceOptions, setServiceOptions] = useState<any[]>([]);
+  const [packageContents, setPackageContents] = useState<any[]>([]);
+  const [selectedServices, setSelectedServices] = useState<Record<string, boolean>>({});
+  const [selectedPackages, setSelectedPackages] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState({
     user_id: '',
     device_type: '',
@@ -38,33 +42,32 @@ export function CreateComplaintDialog({
     return_postal_code: '',
     return_city: '',
     warranty_repair: false,
-    express_repair: false,
-    screen_protection_foil: false,
-    package_device: true,
-    package_original_packaging: false,
-    package_mount: false,
-    package_adapter: false,
-    package_usb_cable: false,
-    package_receipt_copy: false,
   });
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('user_id, first_name, last_name, company_name, email, user_type')
-          .order('first_name');
+        const [usersRes, servicesRes, packagesRes] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('user_id, first_name, last_name, company_name, email, user_type')
+            .order('first_name'),
+          supabase.from('service_options').select('*').eq('is_active', true).order('display_order'),
+          supabase.from('package_contents').select('*').eq('is_active', true).order('display_order')
+        ]);
 
-        if (error) throw error;
-        setUsers(data || []);
+        if (usersRes.error) throw usersRes.error;
+        setUsers(usersRes.data || []);
+        
+        if (servicesRes.data) setServiceOptions(servicesRes.data);
+        if (packagesRes.data) setPackageContents(packagesRes.data);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
     if (open) {
-      fetchUsers();
+      fetchData();
     }
   }, [open]);
 
@@ -73,10 +76,18 @@ export function CreateComplaintDialog({
     setLoading(true);
 
     try {
+      // Build package content fields dynamically
+      const packageData: Record<string, boolean> = {};
+      packageContents.forEach((item) => {
+        const fieldKey = `package_${item.name.toLowerCase().replace(/\s+/g, '_')}`;
+        packageData[fieldKey] = selectedPackages[item.id] || false;
+      });
+
       const { error } = await supabase
         .from('complaints')
         .insert([{
           ...formData,
+          ...packageData,
           submission_date: new Date().toISOString(),
           status: 'submitted'
         }]);
@@ -106,15 +117,9 @@ export function CreateComplaintDialog({
         return_postal_code: '',
         return_city: '',
         warranty_repair: false,
-        express_repair: false,
-        screen_protection_foil: false,
-        package_device: true,
-        package_original_packaging: false,
-        package_mount: false,
-        package_adapter: false,
-        package_usb_cable: false,
-        package_receipt_copy: false,
       });
+      setSelectedServices({});
+      setSelectedPackages({});
     } catch (error) {
       console.error('Error creating complaint:', error);
       toast({
@@ -280,18 +285,27 @@ export function CreateComplaintDialog({
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Service Options</h3>
             <div className="grid grid-cols-3 gap-4">
-              {[
-                { key: 'warranty_repair', label: 'Warranty Repair' },
-                { key: 'express_repair', label: 'Express Repair' },
-                { key: 'screen_protection_foil', label: 'Screen Protection Foil' },
-              ].map(option => (
-                <div key={option.key} className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="warranty_repair"
+                  checked={formData.warranty_repair}
+                  onCheckedChange={(checked) => setFormData({...formData, warranty_repair: !!checked})}
+                />
+                <Label htmlFor="warranty_repair">Warranty Repair</Label>
+              </div>
+              
+              {serviceOptions.map((option) => (
+                <div key={option.id} className="flex items-center space-x-2">
                   <Checkbox
-                    id={option.key}
-                    checked={formData[option.key as keyof typeof formData] as boolean}
-                    onCheckedChange={(checked) => setFormData({...formData, [option.key]: checked})}
+                    id={`service-${option.id}`}
+                    checked={selectedServices[option.id] || false}
+                    onCheckedChange={(checked) => 
+                      setSelectedServices(prev => ({ ...prev, [option.id]: !!checked }))
+                    }
                   />
-                  <Label htmlFor={option.key}>{option.label}</Label>
+                  <Label htmlFor={`service-${option.id}`}>
+                    {option.name} (+{option.price.toFixed(2)} PLN)
+                  </Label>
                 </div>
               ))}
             </div>
@@ -301,21 +315,16 @@ export function CreateComplaintDialog({
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Package Contents</h3>
             <div className="grid grid-cols-3 gap-4">
-              {[
-                { key: 'package_device', label: 'Device' },
-                { key: 'package_original_packaging', label: 'Original Packaging' },
-                { key: 'package_mount', label: 'Mount' },
-                { key: 'package_adapter', label: 'Adapter' },
-                { key: 'package_usb_cable', label: 'USB Cable' },
-                { key: 'package_receipt_copy', label: 'Receipt Copy' },
-              ].map(option => (
-                <div key={option.key} className="flex items-center space-x-2">
+              {packageContents.map((item) => (
+                <div key={item.id} className="flex items-center space-x-2">
                   <Checkbox
-                    id={option.key}
-                    checked={formData[option.key as keyof typeof formData] as boolean}
-                    onCheckedChange={(checked) => setFormData({...formData, [option.key]: checked})}
+                    id={`package-${item.id}`}
+                    checked={selectedPackages[item.id] || false}
+                    onCheckedChange={(checked) => 
+                      setSelectedPackages(prev => ({ ...prev, [item.id]: !!checked }))
+                    }
                   />
-                  <Label htmlFor={option.key}>{option.label}</Label>
+                  <Label htmlFor={`package-${item.id}`}>{item.name}</Label>
                 </div>
               ))}
             </div>

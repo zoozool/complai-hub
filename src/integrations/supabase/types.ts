@@ -182,6 +182,33 @@ export type Database = {
         }
         Relationships: []
       }
+      package_contents: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pickup_requests: {
         Row: {
           address: string
@@ -290,6 +317,36 @@ export type Database = {
           user_id?: string
           user_type?: string
           vat_id?: string | null
+        }
+        Relationships: []
+      }
+      service_options: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          updated_at?: string
         }
         Relationships: []
       }
