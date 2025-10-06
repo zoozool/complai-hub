@@ -146,9 +146,20 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Your Complaints</span>
-              <Button onClick={() => navigate('/new-complaint')}>
-                Submit New Complaint
-              </Button>
+              <div className="flex gap-2">
+                {!isBusinessPartner && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate('/order-courier')}
+                  >
+                    <Package className="h-4 w-4 mr-2" />
+                    Order Courier / Parcel Locker
+                  </Button>
+                )}
+                <Button onClick={() => navigate('/new-complaint')}>
+                  Submit New Complaint
+                </Button>
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>

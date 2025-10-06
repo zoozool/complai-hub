@@ -128,6 +128,60 @@ export type Database = {
         }
         Relationships: []
       }
+      courier_orders: {
+        Row: {
+          city: string
+          company_name: string | null
+          country: string
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          postal_code: string
+          price: number
+          status: string
+          street: string
+          updated_at: string
+          user_id: string
+          vat_id: string | null
+        }
+        Insert: {
+          city: string
+          company_name?: string | null
+          country: string
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          postal_code: string
+          price?: number
+          status?: string
+          street: string
+          updated_at?: string
+          user_id: string
+          vat_id?: string | null
+        }
+        Update: {
+          city?: string
+          company_name?: string | null
+          country?: string
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          postal_code?: string
+          price?: number
+          status?: string
+          street?: string
+          updated_at?: string
+          user_id?: string
+          vat_id?: string | null
+        }
+        Relationships: []
+      }
       pickup_requests: {
         Row: {
           address: string

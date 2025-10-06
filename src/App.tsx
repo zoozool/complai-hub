@@ -13,7 +13,7 @@ import SchedulePickup from "./pages/SchedulePickup";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-
+import OrderCourier from "./pages/OrderCourier";
 import UserManagement from "./pages/admin/UserManagement";
 
 const queryClient = new QueryClient();
@@ -33,6 +33,7 @@ const App = () => (
             <Route path="/complaint/:id" element={<ComplaintDetails />} />
             <Route path="/schedule-pickup" element={<SchedulePickup />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/order-courier" element={<OrderCourier />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/assignments" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagement />} />
