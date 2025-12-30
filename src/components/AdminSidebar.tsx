@@ -28,12 +28,11 @@ export function AdminSidebar() {
 
   // Define menu items based on role
   const getMenuItems = () => {
-    const items = [
+    const items: Array<{ title: string; url: string; icon: typeof ClipboardList }> = [
       { 
         title: "Dashboard", 
         url: "/admin/dashboard", 
         icon: ClipboardList,
-        roles: ['main_administrator', 'employee', 'service_technician']
       },
     ];
 
@@ -43,13 +42,11 @@ export function AdminSidebar() {
           title: "User Management", 
           url: "/admin/users", 
           icon: Users,
-          roles: ['main_administrator']
         },
         { 
           title: "Settings", 
           url: "/admin/settings", 
           icon: Settings,
-          roles: ['main_administrator']
         }
       );
     }
@@ -60,18 +57,16 @@ export function AdminSidebar() {
           title: "My Assignments",
           url: "/admin/assignments",
           icon: Wrench,
-          roles: ['service_technician']
         },
         {
           title: "Warranty Repair",
           url: "/admin/warranty-repairs",
           icon: ShieldCheck,
-          roles: ['service_technician']
         }
       );
     }
 
-    return items.filter(item => item.roles.includes(role as string));
+    return items;
   };
 
   const menuItems = getMenuItems();
