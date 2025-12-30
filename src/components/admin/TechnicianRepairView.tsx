@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Wrench, Package, Calculator, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Wrench, Package, Calculator, Save, Loader2, Play, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -97,6 +97,8 @@ const SPARE_PARTS = [
 
 export function TechnicianRepairView({ complaint, onBack, onSuccess }: TechnicianRepairViewProps) {
   const [saving, setSaving] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(complaint.status);
   const [technicianNotes, setTechnicianNotes] = useState(complaint.service_notes || "");
   const [otherComponents, setOtherComponents] = useState("");
   const [diagnosis, setDiagnosis] = useState(complaint.diagnosis || "");
@@ -155,6 +157,49 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
     }
   };
 
+  const handleStatusChange = async (newStatus: "in_progress" | "completed") => {
+    setUpdatingStatus(true);
+    try {
+      const updateData: Record<string, unknown> = { status: newStatus };
+      
+      // If completing, also save all repair data
+      if (newStatus === "completed") {
+        updateData.service_notes = technicianNotes;
+        updateData.diagnosis = diagnosis;
+        updateData.repair_cost = finalCost;
+        updateData.completion_date = new Date().toISOString();
+      }
+
+      const { error } = await supabase
+        .from("complaints")
+        .update(updateData)
+        .eq("id", complaint.id);
+
+      if (error) throw error;
+
+      setCurrentStatus(newStatus);
+      toast({
+        title: newStatus === "in_progress" ? "Naprawa rozpoczęta" : "Naprawa zakończona",
+        description: newStatus === "in_progress" 
+          ? "Status zmieniony na 'W trakcie naprawy'." 
+          : "Status zmieniony na 'Zakończone'.",
+      });
+
+      if (newStatus === "completed") {
+        onSuccess();
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast({
+        title: "Błąd",
+        description: "Nie udało się zmienić statusu.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   const getStatusBadge = (status: string | null) => {
     const statusColors: Record<string, string> = {
       submitted: "bg-blue-500/20 text-blue-400 border-blue-500/30",
@@ -174,19 +219,52 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <Button variant="ghost" size="icon" onClick={onBack}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <h1 className="text-2xl font-bold">
             Naprawa: {complaint.internal_complaint_number || complaint.id.slice(0, 8)}
           </h1>
           <p className="text-muted-foreground">Panel serwisanta</p>
         </div>
-        <Badge className={getStatusBadge(complaint.status)}>
-          {complaint.status?.replace("_", " ") || "Submitted"}
-        </Badge>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Badge className={getStatusBadge(currentStatus)}>
+            {currentStatus?.replace("_", " ") || "Submitted"}
+          </Badge>
+          
+          {/* Status action buttons */}
+          {currentStatus === "submitted" && (
+            <Button 
+              onClick={() => handleStatusChange("in_progress")}
+              disabled={updatingStatus}
+              className="bg-yellow-600 hover:bg-yellow-700"
+            >
+              {updatingStatus ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Play className="mr-2 h-4 w-4" />
+              )}
+              Rozpocznij naprawę
+            </Button>
+          )}
+          
+          {currentStatus === "in_progress" && (
+            <Button 
+              onClick={() => handleStatusChange("completed")}
+              disabled={updatingStatus}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {updatingStatus ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCircle className="mr-2 h-4 w-4" />
+              )}
+              Zakończ naprawę
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Read-only Complaint Details */}
