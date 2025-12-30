@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Loader2, Shield } from "lucide-react";
+import { MoreHorizontal, Edit, Loader2, Shield, Ban, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { EditUserDialog } from "@/components/admin/EditUserDialog";
 import { AssignRoleDialog } from "@/components/admin/AssignRoleDialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export default function UserManagement() {
   const { isAdmin, loading: roleLoading } = useRole();
@@ -18,8 +19,11 @@ export default function UserManagement() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [editingUser, setEditingUser] = useState(null);
-  const [assigningRole, setAssigningRole] = useState(null);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [assigningRole, setAssigningRole] = useState<any>(null);
+  const [suspendingUser, setSuspendingUser] = useState<any>(null);
+  const [deletingUser, setDeletingUser] = useState<any>(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -72,6 +76,76 @@ export default function UserManagement() {
   const getUserRole = (user: any) => {
     if (!user.user_roles || user.user_roles.length === 0) return 'No Role';
     return user.user_roles[0].role.replace('_', ' ').toUpperCase();
+  };
+
+  const handleSuspendUser = async () => {
+    if (!suspendingUser) return;
+    setActionLoading(true);
+    
+    try {
+      const newStatus = !suspendingUser.is_active;
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_active: newStatus })
+        .eq('id', suspendingUser.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: newStatus ? "User account activated" : "User account suspended",
+      });
+
+      fetchUsers();
+      setSuspendingUser(null);
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update user status",
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!deletingUser) return;
+    setActionLoading(true);
+    
+    try {
+      // First delete user roles
+      await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', deletingUser.user_id);
+
+      // Delete profile
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', deletingUser.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "User account deleted successfully",
+      });
+
+      fetchUsers();
+      setDeletingUser(null);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete user account",
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   if (roleLoading) {
@@ -170,6 +244,17 @@ export default function UserManagement() {
                             <Shield className="mr-2 h-4 w-4" />
                             Manage Role
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setSuspendingUser(user)}>
+                            <Ban className="mr-2 h-4 w-4" />
+                            {user.is_active ? 'Suspend Account' : 'Activate Account'}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => setDeletingUser(user)}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Account
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -199,6 +284,52 @@ export default function UserManagement() {
           onOpenChange={() => setAssigningRole(null)}
           onSuccess={fetchUsers}
         />
+
+        {/* Suspend User Dialog */}
+        <AlertDialog open={!!suspendingUser} onOpenChange={() => setSuspendingUser(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {suspendingUser?.is_active ? 'Suspend User Account?' : 'Activate User Account?'}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {suspendingUser?.is_active 
+                  ? `This will prevent ${suspendingUser?.email} from accessing the system. You can reactivate the account at any time.`
+                  : `This will restore ${suspendingUser?.email}'s access to the system.`}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={actionLoading}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleSuspendUser} disabled={actionLoading}>
+                {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {suspendingUser?.is_active ? 'Suspend' : 'Activate'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Delete User Dialog */}
+        <AlertDialog open={!!deletingUser} onOpenChange={() => setDeletingUser(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete User Account?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the account for {deletingUser?.email} and remove all associated data.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={actionLoading}>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleDeleteUser} 
+                disabled={actionLoading}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Delete Account
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </AdminLayout>
   );
