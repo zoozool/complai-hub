@@ -24,15 +24,26 @@ interface PackageContent {
   display_order: number;
 }
 
+interface SparePart {
+  id: string;
+  name: string;
+  price: number;
+  is_active: boolean;
+  display_order: number;
+}
+
 export default function ComplaintSettings() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([]);
   const [packageContents, setPackageContents] = useState<PackageContent[]>([]);
+  const [spareParts, setSpareParts] = useState<SparePart[]>([]);
   const [editingService, setEditingService] = useState<string | null>(null);
   const [editingPackage, setEditingPackage] = useState<string | null>(null);
+  const [editingPart, setEditingPart] = useState<string | null>(null);
   const [newService, setNewService] = useState({ name: '', price: 0 });
   const [newPackage, setNewPackage] = useState({ name: '' });
+  const [newPart, setNewPart] = useState({ name: '', price: 0 });
 
   useEffect(() => {
     fetchData();
@@ -41,16 +52,19 @@ export default function ComplaintSettings() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [servicesRes, packagesRes] = await Promise.all([
+      const [servicesRes, packagesRes, partsRes] = await Promise.all([
         supabase.from('service_options').select('*').order('display_order'),
-        supabase.from('package_contents').select('*').order('display_order')
+        supabase.from('package_contents').select('*').order('display_order'),
+        supabase.from('spare_parts').select('*').order('display_order')
       ]);
 
       if (servicesRes.error) throw servicesRes.error;
       if (packagesRes.error) throw packagesRes.error;
+      if (partsRes.error) throw partsRes.error;
 
       setServiceOptions(servicesRes.data || []);
       setPackageContents(packagesRes.data || []);
+      setSpareParts(partsRes.data || []);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -193,6 +207,78 @@ export default function ComplaintSettings() {
       if (error) throw error;
 
       toast({ title: "Success", description: "Package content deleted" });
+      fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Spare Parts CRUD
+  const addSparePart = async () => {
+    if (!newPart.name || newPart.price < 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide a valid name and price",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from('spare_parts').insert({
+        name: newPart.name,
+        price: newPart.price,
+        display_order: spareParts.length + 1,
+      });
+
+      if (error) throw error;
+
+      toast({ title: "Success", description: "Spare part added" });
+      setNewPart({ name: '', price: 0 });
+      fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updateSparePart = async (id: string, updates: Partial<SparePart>) => {
+    try {
+      const { error } = await supabase
+        .from('spare_parts')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({ title: "Success", description: "Spare part updated" });
+      setEditingPart(null);
+      fetchData();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteSparePart = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this spare part?")) return;
+
+    try {
+      const { error } = await supabase.from('spare_parts').delete().eq('id', id);
+
+      if (error) throw error;
+
+      toast({ title: "Success", description: "Spare part deleted" });
       fetchData();
     } catch (error: any) {
       toast({
@@ -412,6 +498,120 @@ export default function ComplaintSettings() {
                           size="sm"
                           variant="ghost"
                           onClick={() => deletePackageContent(item.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Spare Parts (Części) */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Części</CardTitle>
+            <CardDescription>Zarządzaj częściami zamiennymi z cenami dla techników</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Add New Spare Part */}
+            <div className="flex gap-2 p-4 bg-muted/50 rounded-lg">
+              <div className="flex-1">
+                <Label htmlFor="new-part-name">Nazwa części</Label>
+                <Input
+                  id="new-part-name"
+                  value={newPart.name}
+                  onChange={(e) => setNewPart({ ...newPart, name: e.target.value })}
+                  placeholder="np. antena GPS(GT, GTR, XS, RS, F)"
+                />
+              </div>
+              <div className="w-32">
+                <Label htmlFor="new-part-price">Cena (PLN)</Label>
+                <Input
+                  id="new-part-price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={newPart.price}
+                  onChange={(e) => setNewPart({ ...newPart, price: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="flex items-end">
+                <Button onClick={addSparePart}>
+                  <Plus className="h-4 w-4 mr-1" />
+                  Dodaj
+                </Button>
+              </div>
+            </div>
+
+            {/* Spare Parts List */}
+            <div className="space-y-2">
+              {spareParts.map((part) => (
+                <div key={part.id} className="flex items-center gap-2 p-3 border rounded-lg">
+                  {editingPart === part.id ? (
+                    <>
+                      <Input
+                        value={part.name}
+                        onChange={(e) => setSpareParts(spareParts.map(p => 
+                          p.id === part.id ? { ...p, name: e.target.value } : p
+                        ))}
+                        className="flex-1"
+                      />
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={part.price}
+                        onChange={(e) => setSpareParts(spareParts.map(p => 
+                          p.id === part.id ? { ...p, price: parseFloat(e.target.value) || 0 } : p
+                        ))}
+                        className="w-32"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => updateSparePart(part.id, {
+                          name: part.name,
+                          price: part.price,
+                        })}
+                      >
+                        <Save className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setEditingPart(null);
+                          fetchData();
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex-1">
+                        <span className="font-medium">{part.name}</span>
+                        <span className="text-muted-foreground ml-2">[{part.price.toFixed(2)} zł]</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={part.is_active}
+                          onCheckedChange={(checked) => updateSparePart(part.id, { is_active: checked })}
+                        />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setEditingPart(part.id)}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => deleteSparePart(part.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
