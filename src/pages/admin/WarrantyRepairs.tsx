@@ -5,9 +5,10 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, ShieldCheck, Play } from "lucide-react";
+import { Loader2, ShieldCheck, Play, Download } from "lucide-react";
 import { TechnicianRepairView } from "@/components/admin/TechnicianRepairView";
 import { toast } from "sonner";
+import { useRole } from "@/hooks/useRole";
 interface WarrantyComplaint {
   id: string;
   internal_complaint_number: string | null;
@@ -33,10 +34,12 @@ interface WarrantyComplaint {
 
 export default function WarrantyRepairs() {
   const { user } = useAuth();
+  const { role } = useRole();
   const [complaints, setComplaints] = useState<WarrantyComplaint[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<WarrantyComplaint | null>(null);
   const [startingRepairId, setStartingRepairId] = useState<string | null>(null);
+  const [fetchingRepair, setFetchingRepair] = useState(false);
 
   useEffect(() => {
     fetchWarrantyComplaints();
@@ -114,6 +117,51 @@ export default function WarrantyRepairs() {
     }
   };
 
+  const handleFetchRepair = async () => {
+    if (!user) return;
+    setFetchingRepair(true);
+
+    try {
+      // Find the oldest unassigned warranty complaint
+      // Priority: express_repair first, then oldest submission_date
+      const { data: availableRepairs, error: fetchError } = await supabase
+        .from("complaints")
+        .select("id, express_repair, submission_date")
+        .eq("warranty_repair", true)
+        .is("assigned_technician_id", null)
+        .in("status", ["submitted", "awaiting_shipment"])
+        .order("express_repair", { ascending: false }) // Express first
+        .order("submission_date", { ascending: true }) // Oldest first
+        .limit(1);
+
+      if (fetchError) throw fetchError;
+
+      if (!availableRepairs || availableRepairs.length === 0) {
+        toast.info("Brak dostępnych napraw do pobrania");
+        setFetchingRepair(false);
+        return;
+      }
+
+      const repairToAssign = availableRepairs[0];
+
+      // Assign the repair to the current technician
+      const { error: updateError } = await supabase
+        .from("complaints")
+        .update({ assigned_technician_id: user.id })
+        .eq("id", repairToAssign.id);
+
+      if (updateError) throw updateError;
+
+      toast.success("Naprawa została przypisana do Ciebie");
+      fetchWarrantyComplaints();
+    } catch (error) {
+      console.error("Error fetching repair:", error);
+      toast.error("Nie udało się pobrać naprawy");
+    } finally {
+      setFetchingRepair(false);
+    }
+  };
+
   // Show detail view if a complaint is selected
   if (selectedComplaint) {
     return (
@@ -130,12 +178,24 @@ export default function WarrantyRepairs() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <ShieldCheck className="h-8 w-8 text-primary" />
-          <div>
-            <h1 className="text-2xl font-bold">Naprawy gwarancyjne</h1>
-            <p className="text-muted-foreground">Urządzenia przypisane do Ciebie</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="h-8 w-8 text-primary" />
+            <div>
+              <h1 className="text-2xl font-bold">Naprawy gwarancyjne</h1>
+              <p className="text-muted-foreground">Urządzenia przypisane do Ciebie</p>
+            </div>
           </div>
+          {role === "service_technician" && (
+            <Button onClick={handleFetchRepair} disabled={fetchingRepair}>
+              {fetchingRepair ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Download className="h-4 w-4 mr-2" />
+              )}
+              Pobierz naprawę
+            </Button>
+          )}
         </div>
 
         {loading ? (
