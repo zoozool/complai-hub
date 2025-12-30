@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ShieldCheck, Play, Download, Search } from "lucide-react";
+import { Loader2, ShieldCheck, Play, Download, Search, X } from "lucide-react";
 import { TechnicianRepairView } from "@/components/admin/TechnicianRepairView";
 import { toast } from "sonner";
 import { useRole } from "@/hooks/useRole";
@@ -40,6 +40,7 @@ export default function WarrantyRepairs() {
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<WarrantyComplaint | null>(null);
   const [startingRepairId, setStartingRepairId] = useState<string | null>(null);
+  const [rejectingRepairId, setRejectingRepairId] = useState<string | null>(null);
   const [fetchingRepair, setFetchingRepair] = useState(false);
   const [serialNumber, setSerialNumber] = useState("");
   const [fetchingBySerial, setFetchingBySerial] = useState(false);
@@ -117,6 +118,28 @@ export default function WarrantyRepairs() {
       toast.error("Nie udało się rozpocząć naprawy");
     } finally {
       setStartingRepairId(null);
+    }
+  };
+
+  const handleRejectRepair = async (e: React.MouseEvent, complaint: WarrantyComplaint) => {
+    e.stopPropagation(); // Prevent card click
+    setRejectingRepairId(complaint.id);
+    
+    try {
+      const { error } = await supabase
+        .from("complaints")
+        .update({ assigned_technician_id: null })
+        .eq("id", complaint.id);
+
+      if (error) throw error;
+
+      toast.success("Naprawa odrzucona");
+      fetchWarrantyComplaints();
+    } catch (error) {
+      console.error("Error rejecting repair:", error);
+      toast.error("Nie udało się odrzucić naprawy");
+    } finally {
+      setRejectingRepairId(null);
     }
   };
 
@@ -345,18 +368,33 @@ export default function WarrantyRepairs() {
                       Zgłoszono: {new Date(complaint.submission_date).toLocaleDateString("pl-PL")}
                     </span>
                     {complaint.status === "submitted" && (
-                      <Button
-                        size="sm"
-                        onClick={(e) => handleStartRepair(e, complaint)}
-                        disabled={startingRepairId === complaint.id}
-                      >
-                        {startingRepairId === complaint.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                        ) : (
-                          <Play className="h-4 w-4 mr-1" />
-                        )}
-                        Rozpocznij naprawę
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          onClick={(e) => handleStartRepair(e, complaint)}
+                          disabled={startingRepairId === complaint.id}
+                        >
+                          {startingRepairId === complaint.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                          ) : (
+                            <Play className="h-4 w-4 mr-1" />
+                          )}
+                          Rozpocznij naprawę
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => handleRejectRepair(e, complaint)}
+                          disabled={rejectingRepairId === complaint.id}
+                        >
+                          {rejectingRepairId === complaint.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                          ) : (
+                            <X className="h-4 w-4 mr-1" />
+                          )}
+                          Odrzuć naprawę
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </CardContent>
