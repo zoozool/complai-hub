@@ -100,7 +100,59 @@ src/
 │   ├── Profile.tsx     # User profile
 │   └── ...
 └── lib/                # Utility functions
+
+supabase/
+└── functions/
+    └── get-complaint/  # Edge function for fetching complaint details
 ```
+
+## 🔌 API Endpoints
+
+### Edge Functions
+
+| Endpoint | Method | Auth Required | Description |
+|----------|--------|---------------|-------------|
+| `/functions/v1/get-complaint` | POST | Yes (JWT) | Fetch complaint details by ID |
+
+### Get Complaint
+
+Retrieves detailed information about a specific complaint. **Restricted to Main Administrators only.**
+
+**Request:**
+```json
+{
+  "complaintId": "uuid-of-complaint"
+}
+```
+
+**Headers:**
+```
+Authorization: Bearer <jwt-token>
+Content-Type: application/json
+```
+
+**Response (200):**
+```json
+{
+  "id": "uuid",
+  "user_id": "uuid",
+  "device_type": "string",
+  "device_serial_number": "string",
+  "damage_description": "string",
+  "status": "submitted | in_progress | completed | awaiting_shipment | cancelled",
+  "assigned_technician_id": "uuid | null",
+  "diagnosis": "string | null",
+  "repair_cost": "number | null",
+  "service_notes": "string | null",
+  ...
+}
+```
+
+**Error Responses:**
+- `401 Unauthorized` - Missing or invalid JWT token
+- `403 Forbidden` - User is not a Main Administrator
+- `404 Not Found` - Complaint not found
+- `400 Bad Request` - Missing complaint ID
 
 ## 🔐 Authentication
 
