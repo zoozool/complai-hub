@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Loader2, Shield, Ban, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Loader2, Shield, Ban, Trash2, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { EditUserDialog } from "@/components/admin/EditUserDialog";
 import { AssignRoleDialog } from "@/components/admin/AssignRoleDialog";
@@ -23,6 +23,7 @@ export default function UserManagement() {
   const [assigningRole, setAssigningRole] = useState<any>(null);
   const [suspendingUser, setSuspendingUser] = useState<any>(null);
   const [deletingUser, setDeletingUser] = useState<any>(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState<any>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
   const fetchUsers = async () => {
@@ -148,6 +149,36 @@ export default function UserManagement() {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!resetPasswordUser) return;
+    setActionLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        resetPasswordUser.email,
+        { redirectTo: `${window.location.origin}/auth` }
+      );
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Password reset email sent to ${resetPasswordUser.email}`,
+      });
+
+      setResetPasswordUser(null);
+    } catch (error) {
+      console.error('Error sending password reset:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send password reset email",
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   if (roleLoading) {
     return (
       <AdminLayout>
@@ -244,6 +275,10 @@ export default function UserManagement() {
                             <Shield className="mr-2 h-4 w-4" />
                             Manage Role
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setResetPasswordUser(user)}>
+                            <KeyRound className="mr-2 h-4 w-4" />
+                            Change Password
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setSuspendingUser(user)}>
                             <Ban className="mr-2 h-4 w-4" />
                             {user.is_active ? 'Suspend Account' : 'Activate Account'}
@@ -326,6 +361,25 @@ export default function UserManagement() {
               >
                 {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Delete Account
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Reset Password Dialog */}
+        <AlertDialog open={!!resetPasswordUser} onOpenChange={() => setResetPasswordUser(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Send Password Reset Email?</AlertDialogTitle>
+              <AlertDialogDescription>
+                A password reset email will be sent to {resetPasswordUser?.email}. They will receive a link to create a new password.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={actionLoading}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleResetPassword} disabled={actionLoading}>
+                {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Send Reset Email
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
