@@ -26,15 +26,18 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const isBusinessPartner = userProfile?.user_type === 'business_partner';
-
-  // Redirect technicians to admin dashboard
-  if (isTechnician()) {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
+  const shouldRedirect = isTechnician();
 
   useEffect(() => {
-    fetchComplaints();
-  }, []);
+    if (!shouldRedirect) {
+      fetchComplaints();
+    }
+  }, [shouldRedirect]);
+
+  // Redirect technicians to admin dashboard (after all hooks)
+  if (shouldRedirect) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
 
   const fetchComplaints = async () => {
     try {
