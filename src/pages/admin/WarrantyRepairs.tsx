@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ShieldCheck, Play, Download, Search, X } from "lucide-react";
 import { TechnicianRepairView } from "@/components/admin/TechnicianRepairView";
+import { RejectRepairDialog } from "@/components/admin/RejectRepairDialog";
 import { toast } from "sonner";
 import { useRole } from "@/hooks/useRole";
+
 interface WarrantyComplaint {
   id: string;
   internal_complaint_number: string | null;
@@ -40,7 +42,8 @@ export default function WarrantyRepairs() {
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<WarrantyComplaint | null>(null);
   const [startingRepairId, setStartingRepairId] = useState<string | null>(null);
-  const [rejectingRepairId, setRejectingRepairId] = useState<string | null>(null);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectingComplaint, setRejectingComplaint] = useState<WarrantyComplaint | null>(null);
   const [fetchingRepair, setFetchingRepair] = useState(false);
   const [serialNumber, setSerialNumber] = useState("");
   const [fetchingBySerial, setFetchingBySerial] = useState(false);
@@ -121,26 +124,10 @@ export default function WarrantyRepairs() {
     }
   };
 
-  const handleRejectRepair = async (e: React.MouseEvent, complaint: WarrantyComplaint) => {
+  const handleRejectRepair = (e: React.MouseEvent, complaint: WarrantyComplaint) => {
     e.stopPropagation(); // Prevent card click
-    setRejectingRepairId(complaint.id);
-    
-    try {
-      const { error } = await supabase
-        .from("complaints")
-        .update({ assigned_technician_id: null })
-        .eq("id", complaint.id);
-
-      if (error) throw error;
-
-      toast.success("Naprawa odrzucona");
-      fetchWarrantyComplaints();
-    } catch (error) {
-      console.error("Error rejecting repair:", error);
-      toast.error("Nie udało się odrzucić naprawy");
-    } finally {
-      setRejectingRepairId(null);
-    }
+    setRejectingComplaint(complaint);
+    setRejectDialogOpen(true);
   };
 
   const handleFetchRepair = async () => {
@@ -385,13 +372,8 @@ export default function WarrantyRepairs() {
                           size="sm"
                           variant="outline"
                           onClick={(e) => handleRejectRepair(e, complaint)}
-                          disabled={rejectingRepairId === complaint.id}
                         >
-                          {rejectingRepairId === complaint.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                          ) : (
-                            <X className="h-4 w-4 mr-1" />
-                          )}
+                          <X className="h-4 w-4 mr-1" />
                           Odrzuć naprawę
                         </Button>
                       </div>
@@ -401,6 +383,16 @@ export default function WarrantyRepairs() {
               </Card>
             ))}
           </div>
+        )}
+
+        {rejectingComplaint && (
+          <RejectRepairDialog
+            open={rejectDialogOpen}
+            onOpenChange={setRejectDialogOpen}
+            complaintId={rejectingComplaint.id}
+            deviceSerial={rejectingComplaint.device_serial_number}
+            onSuccess={fetchWarrantyComplaints}
+          />
         )}
       </div>
     </AdminLayout>
