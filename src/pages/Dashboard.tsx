@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useRole } from '@/hooks/useRole';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,18 +13,24 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { FileText, Calendar, Package, Truck, Hash, Building, User } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
 
 const Dashboard = () => {
   const { userProfile } = useAuth();
+  const { isTechnician } = useRole();
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const isBusinessPartner = userProfile?.user_type === 'business_partner';
+
+  // Redirect technicians to admin dashboard
+  if (isTechnician()) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
 
   useEffect(() => {
     fetchComplaints();
