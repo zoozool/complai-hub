@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Settings, Users, ClipboardList, Wrench, LogOut } from "lucide-react";
+import { Settings, Users, ClipboardList, Wrench, LogOut, ShieldCheck } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -55,12 +55,20 @@ export function AdminSidebar() {
     }
 
     if (isTechnician()) {
-      items.push({
-        title: "My Assignments",
-        url: "/admin/assignments",
-        icon: Wrench,
-        roles: ['service_technician']
-      });
+      items.push(
+        {
+          title: "My Assignments",
+          url: "/admin/assignments",
+          icon: Wrench,
+          roles: ['service_technician']
+        },
+        {
+          title: "Warranty Repair",
+          url: "/admin/warranty-repairs",
+          icon: ShieldCheck,
+          roles: ['service_technician']
+        }
+      );
     }
 
     return items.filter(item => item.roles.includes(role as string));
