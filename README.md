@@ -1,73 +1,165 @@
-# Welcome to your Lovable project
+# Service Complaint Management System
 
-## Project info
+A modern web application for managing service complaints, courier orders, and pickup requests. Built with React, TypeScript, and Supabase.
 
-**URL**: https://lovable.dev/projects/e569bdca-1959-45fb-9c1e-460ae06bf4c9
+## 🚀 Features
 
-## How can I edit this code?
+- **User Authentication**: Secure login/signup with email, password reset functionality, and "Remember me" option
+- **Complaint Management**: Submit, track, and manage service complaints
+- **Admin Dashboard**: Comprehensive admin panel for managing users, complaints, and settings
+- **Courier Orders**: Order courier services for shipping devices
+- **Pickup Scheduling**: Schedule device pickups for repair
+- **Role-Based Access**: Different access levels for administrators, employees, and service technicians
+- **User Profiles**: Manage personal and company information
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui components
+- **Backend**: Supabase (PostgreSQL, Authentication, Edge Functions)
+- **State Management**: TanStack React Query
+- **Routing**: React Router DOM
+- **Forms**: React Hook Form with Zod validation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e569bdca-1959-45fb-9c1e-460ae06bf4c9) and start prompting.
+## 📋 Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+- Node.js (v18 or higher)
+- npm or bun package manager
+- Supabase account (for backend services)
 
-**Use your preferred IDE**
+## 🔧 Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. **Clone the repository**
+   ```bash
+   git clone <YOUR_GIT_URL>
+   cd <YOUR_PROJECT_NAME>
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   bun install
+   ```
 
-Follow these steps:
+3. **Start the development server**
+   ```bash
+   npm run dev
+   # or
+   bun run dev
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+4. **Open your browser**
+   Navigate to `http://localhost:5173`
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🗄️ Database Schema
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Tables
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+| Table | Description |
+|-------|-------------|
+| `profiles` | User profile information |
+| `complaints` | Service complaint records |
+| `courier_orders` | Courier order requests |
+| `pickup_requests` | Scheduled pickup requests |
+| `user_roles` | User role assignments |
+| `service_options` | Available service options |
+| `package_contents` | Package content definitions |
+
+### User Roles
+
+- **main_administrator**: Full system access
+- **employee**: Standard employee access
+- **service_technician**: Technician-specific access
+
+### Complaint Statuses
+
+- `submitted` - Initial submission
+- `in_progress` - Being processed
+- `awaiting_shipment` - Ready for shipping
+- `completed` - Repair completed
+- `cancelled` - Cancelled
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── admin/          # Admin-specific components
+│   └── ui/             # Reusable UI components (shadcn)
+├── hooks/              # Custom React hooks
+│   ├── useAuth.tsx     # Authentication hook
+│   └── useRole.tsx     # Role management hook
+├── integrations/
+│   └── supabase/       # Supabase client and types
+├── pages/
+│   ├── admin/          # Admin pages
+│   ├── Auth.tsx        # Authentication page
+│   ├── Dashboard.tsx   # User dashboard
+│   ├── NewComplaint.tsx # Complaint submission
+│   ├── Profile.tsx     # User profile
+│   └── ...
+└── lib/                # Utility functions
 ```
 
-**Edit a file directly in GitHub**
+## 🔐 Authentication
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The application uses Supabase Authentication with the following features:
 
-**Use GitHub Codespaces**
+- Email/Password sign-in and sign-up
+- Password reset via email
+- Remember me functionality
+- Protected routes based on user roles
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🚢 Deployment
 
-## What technologies are used for this project?
+### Via Lovable
 
-This project is built with:
+1. Open [Lovable](https://lovable.dev/projects/e569bdca-1959-45fb-9c1e-460ae06bf4c9)
+2. Click **Share → Publish**
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Custom Domain
 
-## How can I deploy this project?
+1. Navigate to **Project → Settings → Domains**
+2. Click **Connect Domain**
+3. Follow the DNS configuration instructions
 
-Simply open [Lovable](https://lovable.dev/projects/e569bdca-1959-45fb-9c1e-460ae06bf4c9) and click on Share -> Publish.
+## 🔄 Development Workflow
 
-## Can I connect a custom domain to my Lovable project?
+### Making Changes via Lovable
 
-Yes, you can!
+Changes made in Lovable are automatically committed to the connected GitHub repository.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Making Changes via IDE
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+1. Clone the repository
+2. Make changes locally
+3. Push to GitHub
+4. Changes sync automatically to Lovable
+
+## 📝 Environment Variables
+
+The application uses Supabase for backend services. The following are configured automatically:
+
+- `SUPABASE_URL` - Supabase project URL
+- `SUPABASE_ANON_KEY` - Supabase anonymous key
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is private and proprietary.
+
+## 🆘 Support
+
+For support, please contact the project administrator or open an issue in the GitHub repository.
+
+---
+
+Built with ❤️ using [Lovable](https://lovable.dev)
