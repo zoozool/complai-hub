@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,56 +48,17 @@ const FIXED_FEES = [
   { id: "partial", label: "Częściowa", price: 0 },
 ];
 
-const SPARE_PARTS = [
-  { id: "antena_gps_gt", label: "antena GPS(GT, GTR, XS, RS, F)", price: 20 },
-  { id: "akumulator", label: "akumulator (GT, GTR, XS, RS, F, Noti)", price: 20 },
-  { id: "pamiec_glowna_rs", label: "pamięć główna (RS)", price: 10 },
-  { id: "pamiec_robocza_rs", label: "pamięć robocza (RS)", price: 90 },
-  { id: "wyswietlacz_dotykowy_rs", label: "wyświetlacz dotykowy z szybką (RS)", price: 150 },
-  { id: "wyswietlacz_gt", label: "wyświetlacz (GT, GTR)", price: 45 },
-  { id: "szybka_wyswietlacza", label: "szybka wyświetlacza (GT, GTR)", price: 15 },
-  { id: "glosniki", label: "głośniki (GT, GTR, RS)", price: 10 },
-  { id: "glosnik_1w", label: "Głośnik 1W", price: 10 },
-  { id: "obudowa_gtr", label: "obudowa (GTR)", price: 15 },
-  { id: "plyta_glowna_rs", label: "płyta główna (RS)", price: 320 },
-  { id: "mikrokontroler_gt", label: "mikrokontroler (GT, GTR, XS)", price: 30 },
-  { id: "mikrokontroler_rs", label: "mikrokontroler (RS)", price: 40 },
-  { id: "elementy_elektroniczne_2", label: "Elementy elektroniczne - 2 szt", price: 10 },
-  { id: "elementy_elektroniczne_3", label: "Elementy elektroniczne - 3 szt", price: 15 },
-  { id: "elementy_mechaniczne_1", label: "Elementy mechaniczne - 1 szt", price: 5 },
-  { id: "elementy_mechaniczne_2", label: "Elementy mechaniczne - 2 szt", price: 10 },
-  { id: "elementy_mechaniczne_3", label: "Elementy mechaniczne - 3 szt", price: 15 },
-  { id: "plyta_glowna_gt", label: "płyta główna (GT, GTR, F)", price: 160 },
-  { id: "plyta_glowna_xs", label: "płyta główna (XS)", price: 140 },
-  { id: "adapter_usb", label: "Adatper USB 5V/2A", price: 0 },
-  { id: "ekspres", label: "Ekspres", price: 99 },
-  { id: "obudowa_rs", label: "obudowa (RS)", price: 20 },
-  { id: "elementy_elektroniczne_1", label: "Elementy elektroniczne - 1 szt", price: 5 },
-  { id: "modul_bt_rs", label: "moduł BT (RS)", price: 20 },
-  { id: "antena_gsm", label: "antena GSM (GT, GTR, XS, RS, F)", price: 10 },
-  { id: "mikrokontroler_c", label: "Mikrokontroler C", price: 20 },
-  { id: "antena_gps_c", label: "Antena GPS C", price: 10 },
-  { id: "plyta_zasilania", label: "Płyta główna - moduł zasilania", price: 50 },
-  { id: "plyta_komunikacyjny", label: "Płyta główna - moduł komunikacyjny", price: 70 },
-  { id: "kabel_zasilajacy", label: "kabel zasilający (microUSB/USB-C)", price: 0 },
-  { id: "karta_sim", label: "Karta SIM", price: 0 },
-  { id: "plyta_notione", label: "płyta główna(notiOne GPS)", price: 120 },
-  { id: "klawiatura", label: "klawiatura (GT, GTR, XS, RS)", price: 15 },
-  { id: "karta_sd", label: "karta SD (GT, GTR, XS)", price: 55 },
-  { id: "elementy_montazowe", label: "Elementy montażowe", price: 5 },
-  { id: "modul_gps_gt", label: "moduł GPS (GT, GTR, F)", price: 30 },
-  { id: "modul_gsm_gt", label: "moduł GSM( GT, GTR)", price: 60 },
-  { id: "modul_gps_gsm_gtr", label: "moduł GPS/GSM(GTR, XS, F)", price: 40 },
-  { id: "modul_gps_gsm_rs", label: "moduł GPS/GSM (RS)", price: 110 },
-  { id: "panel_pojemnosciowy", label: "panel pojemnościowy (GT, GTR)", price: 15 },
-  { id: "usb_gniazdo", label: "USB/Gniazdo zasilania (GT, GTR, XS, RS, F)", price: 10 },
-  { id: "obudowa_xs", label: "obudowa (XS, F, Noti)", price: 10 },
-  { id: "folia", label: "Folia", price: 49 },
-];
+type SparePart = {
+  id: string;
+  name: string;
+  price: number;
+};
 
 export function TechnicianRepairView({ complaint, onBack, onSuccess }: TechnicianRepairViewProps) {
   const [saving, setSaving] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [partsLoading, setPartsLoading] = useState(true);
+  const [spareParts, setSpareParts] = useState<SparePart[]>([]);
   const [currentStatus, setCurrentStatus] = useState(complaint.status);
   const [technicianNotes, setTechnicianNotes] = useState(complaint.service_notes || "");
   const [otherComponents, setOtherComponents] = useState("");
@@ -107,14 +68,48 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
   const [selectedFixedFee, setSelectedFixedFee] = useState<string>("warranty");
   const [selectedParts, setSelectedParts] = useState<string[]>([]);
 
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchSpareParts = async () => {
+      setPartsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("spare_parts")
+          .select("id, name, price")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true });
+
+        if (error) throw error;
+        if (!mounted) return;
+        setSpareParts((data || []) as SparePart[]);
+      } catch (err) {
+        console.error("Error fetching spare parts:", err);
+        toast({
+          title: "Błąd",
+          description: "Nie udało się pobrać listy części.",
+          variant: "destructive",
+        });
+      } finally {
+        if (mounted) setPartsLoading(false);
+      }
+    };
+
+    fetchSpareParts();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const calculatedCost = useMemo(() => {
-    const fixedFee = FIXED_FEES.find(f => f.id === selectedFixedFee)?.price || 0;
+    const fixedFee = FIXED_FEES.find((f) => f.id === selectedFixedFee)?.price || 0;
     const partsTotal = selectedParts.reduce((sum, partId) => {
-      const part = SPARE_PARTS.find(p => p.id === partId);
+      const part = spareParts.find((p) => p.id === partId);
       return sum + (part?.price || 0);
     }, 0);
     return fixedFee + partsTotal;
-  }, [selectedFixedFee, selectedParts]);
+  }, [selectedFixedFee, selectedParts, spareParts]);
 
   const finalCost = useManualCost && manualCost ? parseFloat(manualCost) : calculatedCost;
 
@@ -212,9 +207,9 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
   };
 
   // Split spare parts into two columns
-  const midPoint = Math.ceil(SPARE_PARTS.length / 2);
-  const leftColumnParts = SPARE_PARTS.slice(0, midPoint);
-  const rightColumnParts = SPARE_PARTS.slice(midPoint);
+  const midPoint = Math.ceil(spareParts.length / 2);
+  const leftColumnParts = spareParts.slice(0, midPoint);
+  const rightColumnParts = spareParts.slice(midPoint);
 
   return (
     <div className="space-y-6">
@@ -393,38 +388,47 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
           <CardTitle className="text-lg">Części</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-2">
-            <div className="space-y-2">
-              {leftColumnParts.map((part) => (
-                <div key={part.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={part.id}
-                    checked={selectedParts.includes(part.id)}
-                    onCheckedChange={() => handlePartToggle(part.id)}
-                  />
-                  <Label htmlFor={part.id} className="flex-1 cursor-pointer text-sm">
-                    <span>{part.label}</span>
-                    <span className="text-muted-foreground ml-1">[{part.price.toFixed(2)} zł]</span>
-                  </Label>
-                </div>
-              ))}
+          {partsLoading ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Ładowanie części…
             </div>
-            <div className="space-y-2">
-              {rightColumnParts.map((part) => (
-                <div key={part.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={part.id}
-                    checked={selectedParts.includes(part.id)}
-                    onCheckedChange={() => handlePartToggle(part.id)}
-                  />
-                  <Label htmlFor={part.id} className="flex-1 cursor-pointer text-sm">
-                    <span>{part.label}</span>
-                    <span className="text-muted-foreground ml-1">[{part.price.toFixed(2)} zł]</span>
-                  </Label>
-                </div>
-              ))}
+          ) : spareParts.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Brak aktywnych części do wyboru.</p>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-2">
+              <div className="space-y-2">
+                {leftColumnParts.map((part) => (
+                  <div key={part.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={part.id}
+                      checked={selectedParts.includes(part.id)}
+                      onCheckedChange={() => handlePartToggle(part.id)}
+                    />
+                    <Label htmlFor={part.id} className="flex-1 cursor-pointer text-sm">
+                      <span>{part.name}</span>
+                      <span className="text-muted-foreground ml-1">[{Number(part.price).toFixed(2)} zł]</span>
+                    </Label>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2">
+                {rightColumnParts.map((part) => (
+                  <div key={part.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={part.id}
+                      checked={selectedParts.includes(part.id)}
+                      onCheckedChange={() => handlePartToggle(part.id)}
+                    />
+                    <Label htmlFor={part.id} className="flex-1 cursor-pointer text-sm">
+                      <span>{part.name}</span>
+                      <span className="text-muted-foreground ml-1">[{Number(part.price).toFixed(2)} zł]</span>
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
@@ -448,7 +452,7 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
               <span className="text-muted-foreground">Części ({selectedParts.length})</span>
               <p className="text-lg font-bold">
                 {selectedParts.reduce((sum, partId) => {
-                  const part = SPARE_PARTS.find(p => p.id === partId);
+                  const part = spareParts.find((p) => p.id === partId);
                   return sum + (part?.price || 0);
                 }, 0).toFixed(2)} zł
               </p>
