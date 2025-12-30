@@ -18,6 +18,7 @@ import OrderCourier from "./pages/OrderCourier";
 import UserManagement from "./pages/admin/UserManagement";
 import ComplaintSettings from "./pages/admin/ComplaintSettings";
 import WarrantyRepairs from "./pages/admin/WarrantyRepairs";
+import AcceptDevice from "./pages/admin/AcceptDevice";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/admin/warranty-repairs" element={<WarrantyRepairs />} />
               <Route path="/admin/users" element={<UserManagement />} />
               <Route path="/admin/settings" element={<ComplaintSettings />} />
+              <Route path="/admin/accept-device" element={<AcceptDevice />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

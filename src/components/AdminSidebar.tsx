@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Settings, Users, ClipboardList, Wrench, LogOut, ShieldCheck } from "lucide-react";
+import { Settings, Users, ClipboardList, Wrench, LogOut, ShieldCheck, PackageCheck } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -47,6 +47,16 @@ export function AdminSidebar() {
           title: "Settings", 
           url: "/admin/settings", 
           icon: Settings,
+        }
+      );
+    }
+
+    if (isEmployee()) {
+      items.push(
+        {
+          title: "Przyjmij urządzenie",
+          url: "/admin/accept-device",
+          icon: PackageCheck,
         }
       );
     }
