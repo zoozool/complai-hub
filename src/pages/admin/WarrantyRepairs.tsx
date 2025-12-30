@@ -4,9 +4,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, ShieldCheck, Play } from "lucide-react";
 import { TechnicianRepairView } from "@/components/admin/TechnicianRepairView";
-
+import { toast } from "sonner";
 interface WarrantyComplaint {
   id: string;
   internal_complaint_number: string | null;
@@ -35,6 +36,7 @@ export default function WarrantyRepairs() {
   const [complaints, setComplaints] = useState<WarrantyComplaint[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<WarrantyComplaint | null>(null);
+  const [startingRepairId, setStartingRepairId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchWarrantyComplaints();
@@ -88,6 +90,28 @@ export default function WarrantyRepairs() {
   const handleSuccess = () => {
     setSelectedComplaint(null);
     fetchWarrantyComplaints();
+  };
+
+  const handleStartRepair = async (e: React.MouseEvent, complaint: WarrantyComplaint) => {
+    e.stopPropagation(); // Prevent card click
+    setStartingRepairId(complaint.id);
+    
+    try {
+      const { error } = await supabase
+        .from("complaints")
+        .update({ status: "in_progress" })
+        .eq("id", complaint.id);
+
+      if (error) throw error;
+
+      toast.success("Naprawa rozpoczęta");
+      fetchWarrantyComplaints();
+    } catch (error) {
+      console.error("Error starting repair:", error);
+      toast.error("Nie udało się rozpocząć naprawy");
+    } finally {
+      setStartingRepairId(null);
+    }
   };
 
   // Show detail view if a complaint is selected
@@ -164,8 +188,24 @@ export default function WarrantyRepairs() {
                       <p className="text-sm">{complaint.diagnosis}</p>
                     </div>
                   )}
-                  <div className="text-xs text-muted-foreground pt-2">
-                    Zgłoszono: {new Date(complaint.submission_date).toLocaleDateString("pl-PL")}
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-xs text-muted-foreground">
+                      Zgłoszono: {new Date(complaint.submission_date).toLocaleDateString("pl-PL")}
+                    </span>
+                    {complaint.status === "submitted" && (
+                      <Button
+                        size="sm"
+                        onClick={(e) => handleStartRepair(e, complaint)}
+                        disabled={startingRepairId === complaint.id}
+                      >
+                        {startingRepairId === complaint.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                        ) : (
+                          <Play className="h-4 w-4 mr-1" />
+                        )}
+                        Rozpocznij naprawę
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
