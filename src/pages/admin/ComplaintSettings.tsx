@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Plus, Trash2, Edit2, Save, X } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-
+import { LanguageSettings } from "@/components/admin/LanguageSettings";
 interface ServiceOption {
   id: string;
   name: string;
@@ -623,6 +623,9 @@ export default function ComplaintSettings() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Language Settings */}
+        <LanguageSettings />
       </div>
     </AdminLayout>
   );
