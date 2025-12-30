@@ -5,6 +5,7 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, ShieldCheck } from "lucide-react";
+import { TechnicianRepairView } from "@/components/admin/TechnicianRepairView";
 
 interface WarrantyComplaint {
   id: string;
@@ -16,12 +17,24 @@ interface WarrantyComplaint {
   submission_date: string;
   diagnosis: string | null;
   repair_cost: number | null;
+  service_notes: string | null;
+  return_first_name: string;
+  return_last_name: string;
+  return_email: string;
+  return_phone: string;
+  return_street: string;
+  return_postal_code: string;
+  return_city: string;
+  warranty_repair: boolean;
+  express_repair: boolean;
+  reported_problem: string | null;
 }
 
 export default function WarrantyRepairs() {
   const { user } = useAuth();
   const [complaints, setComplaints] = useState<WarrantyComplaint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedComplaint, setSelectedComplaint] = useState<WarrantyComplaint | null>(null);
 
   useEffect(() => {
     fetchWarrantyComplaints();
@@ -33,7 +46,13 @@ export default function WarrantyRepairs() {
     try {
       const { data, error } = await supabase
         .from("complaints")
-        .select("id, internal_complaint_number, device_type, device_serial_number, damage_description, status, submission_date, diagnosis, repair_cost")
+        .select(`
+          id, internal_complaint_number, device_type, device_serial_number, 
+          damage_description, status, submission_date, diagnosis, repair_cost,
+          service_notes, return_first_name, return_last_name, return_email,
+          return_phone, return_street, return_postal_code, return_city,
+          warranty_repair, express_repair, reported_problem
+        `)
         .eq("warranty_repair", true)
         .eq("assigned_technician_id", user.id)
         .order("submission_date", { ascending: false });
@@ -58,14 +77,40 @@ export default function WarrantyRepairs() {
     return statusColors[status || "submitted"] || statusColors.submitted;
   };
 
+  const handleComplaintClick = (complaint: WarrantyComplaint) => {
+    setSelectedComplaint(complaint);
+  };
+
+  const handleBack = () => {
+    setSelectedComplaint(null);
+  };
+
+  const handleSuccess = () => {
+    setSelectedComplaint(null);
+    fetchWarrantyComplaints();
+  };
+
+  // Show detail view if a complaint is selected
+  if (selectedComplaint) {
+    return (
+      <AdminLayout>
+        <TechnicianRepairView
+          complaint={selectedComplaint}
+          onBack={handleBack}
+          onSuccess={handleSuccess}
+        />
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <ShieldCheck className="h-8 w-8 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">Warranty Repairs</h1>
-            <p className="text-muted-foreground">Devices assigned to you under warranty</p>
+            <h1 className="text-2xl font-bold">Naprawy gwarancyjne</h1>
+            <p className="text-muted-foreground">Urządzenia przypisane do Ciebie</p>
           </div>
         </div>
 
@@ -77,13 +122,17 @@ export default function WarrantyRepairs() {
           <Card>
             <CardContent className="py-12 text-center">
               <ShieldCheck className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No warranty repairs assigned to you</p>
+              <p className="text-muted-foreground">Brak napraw gwarancyjnych przypisanych do Ciebie</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-4">
             {complaints.map((complaint) => (
-              <Card key={complaint.id} className="hover:border-primary/50 transition-colors">
+              <Card 
+                key={complaint.id} 
+                className="hover:border-primary/50 transition-colors cursor-pointer"
+                onClick={() => handleComplaintClick(complaint)}
+              >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">
@@ -97,26 +146,26 @@ export default function WarrantyRepairs() {
                 <CardContent className="space-y-2">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Device:</span>
+                      <span className="text-muted-foreground">Urządzenie:</span>
                       <p className="font-medium">{complaint.device_type}</p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Serial:</span>
+                      <span className="text-muted-foreground">Numer seryjny:</span>
                       <p className="font-medium">{complaint.device_serial_number}</p>
                     </div>
                   </div>
                   <div>
-                    <span className="text-muted-foreground text-sm">Description:</span>
+                    <span className="text-muted-foreground text-sm">Opis uszkodzenia:</span>
                     <p className="text-sm">{complaint.damage_description}</p>
                   </div>
                   {complaint.diagnosis && (
                     <div>
-                      <span className="text-muted-foreground text-sm">Diagnosis:</span>
+                      <span className="text-muted-foreground text-sm">Diagnoza:</span>
                       <p className="text-sm">{complaint.diagnosis}</p>
                     </div>
                   )}
                   <div className="text-xs text-muted-foreground pt-2">
-                    Submitted: {new Date(complaint.submission_date).toLocaleDateString()}
+                    Zgłoszono: {new Date(complaint.submission_date).toLocaleDateString("pl-PL")}
                   </div>
                 </CardContent>
               </Card>
