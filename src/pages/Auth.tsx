@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { Navigate } from 'react-router-dom';
@@ -20,6 +21,7 @@ const Auth = () => {
   const [loginForm, setLoginForm] = useState({
     email: '',
     password: '',
+    rememberMe: false,
   });
 
   // Registration form state
@@ -183,6 +185,16 @@ const Auth = () => {
                       onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
                       required
                     />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="remember-me"
+                      checked={loginForm.rememberMe}
+                      onCheckedChange={(checked) => setLoginForm(prev => ({ ...prev, rememberMe: checked === true }))}
+                    />
+                    <Label htmlFor="remember-me" className="text-sm font-normal cursor-pointer">
+                      Remember me
+                    </Label>
                   </div>
                   
                   <div className="bg-accent/50 p-4 rounded-lg">
