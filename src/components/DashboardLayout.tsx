@@ -81,23 +81,27 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <nav className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-8 h-14">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center space-x-2"
-            >
-              <FileText className="h-4 w-4" />
-              <span>My Complaints</span>
-            </Button>
+            {!isTechnician() && (
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center space-x-2"
+              >
+                <FileText className="h-4 w-4" />
+                <span>My Complaints</span>
+              </Button>
+            )}
 
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/new-complaint')}
-              className="flex items-center space-x-2"
-            >
-              <Plus className="h-4 w-4" />
-              <span>New Complaint</span>
-            </Button>
+            {!isTechnician() && (
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/new-complaint')}
+                className="flex items-center space-x-2"
+              >
+                <Plus className="h-4 w-4" />
+                <span>New Complaint</span>
+              </Button>
+            )}
 
             {isBusinessPartner && (
               <Button
