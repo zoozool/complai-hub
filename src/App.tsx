@@ -16,6 +16,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import OrderCourier from "./pages/OrderCourier";
 import UserManagement from "./pages/admin/UserManagement";
 import ComplaintSettings from "./pages/admin/ComplaintSettings";
+import WarrantyRepairs from "./pages/admin/WarrantyRepairs";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/order-courier" element={<OrderCourier />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/assignments" element={<AdminDashboard />} />
+            <Route path="/admin/warranty-repairs" element={<WarrantyRepairs />} />
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/settings" element={<ComplaintSettings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
