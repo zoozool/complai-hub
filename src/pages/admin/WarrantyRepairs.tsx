@@ -5,7 +5,8 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, ShieldCheck, Play, Download } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, ShieldCheck, Play, Download, Search } from "lucide-react";
 import { TechnicianRepairView } from "@/components/admin/TechnicianRepairView";
 import { toast } from "sonner";
 import { useRole } from "@/hooks/useRole";
@@ -40,6 +41,8 @@ export default function WarrantyRepairs() {
   const [selectedComplaint, setSelectedComplaint] = useState<WarrantyComplaint | null>(null);
   const [startingRepairId, setStartingRepairId] = useState<string | null>(null);
   const [fetchingRepair, setFetchingRepair] = useState(false);
+  const [serialNumber, setSerialNumber] = useState("");
+  const [fetchingBySerial, setFetchingBySerial] = useState(false);
 
   useEffect(() => {
     fetchWarrantyComplaints();
@@ -162,6 +165,61 @@ export default function WarrantyRepairs() {
     }
   };
 
+  const handleFetchBySerial = async () => {
+    if (!user) return;
+    const trimmedSerial = serialNumber.trim();
+    
+    if (!trimmedSerial) {
+      toast.error("Wpisz numer seryjny urządzenia");
+      return;
+    }
+
+    if (trimmedSerial.length > 100) {
+      toast.error("Numer seryjny jest za długi");
+      return;
+    }
+
+    setFetchingBySerial(true);
+
+    try {
+      // Find the unassigned warranty complaint with this serial number
+      const { data: matchingRepairs, error: fetchError } = await supabase
+        .from("complaints")
+        .select("id, device_serial_number")
+        .eq("warranty_repair", true)
+        .is("assigned_technician_id", null)
+        .ilike("device_serial_number", trimmedSerial)
+        .limit(1);
+
+      if (fetchError) throw fetchError;
+
+      if (!matchingRepairs || matchingRepairs.length === 0) {
+        toast.error("Nie znaleziono nieprzypisanej naprawy gwarancyjnej o tym numerze seryjnym");
+        setFetchingBySerial(false);
+        return;
+      }
+
+      const repairToAssign = matchingRepairs[0];
+
+      // Assign the repair to the current technician
+      const { error: updateError } = await supabase
+        .from("complaints")
+        .update({ assigned_technician_id: user.id })
+        .eq("id", repairToAssign.id);
+
+      if (updateError) throw updateError;
+
+      toast.success(`Naprawa urządzenia ${repairToAssign.device_serial_number} została przypisana do Ciebie`);
+      setSerialNumber("");
+      fetchWarrantyComplaints();
+    } catch (error) {
+      console.error("Error fetching repair by serial:", error);
+      toast.error("Nie udało się pobrać naprawy");
+    } finally {
+      setFetchingBySerial(false);
+    }
+  };
+
   // Show detail view if a complaint is selected
   if (selectedComplaint) {
     return (
@@ -187,16 +245,50 @@ export default function WarrantyRepairs() {
             </div>
           </div>
           {role === "service_technician" && (
-            <Button onClick={handleFetchRepair} disabled={fetchingRepair}>
-              {fetchingRepair ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <Download className="h-4 w-4 mr-2" />
-              )}
-              Pobierz naprawę
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button onClick={handleFetchRepair} disabled={fetchingRepair}>
+                {fetchingRepair ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
+                Pobierz naprawę
+              </Button>
+            </div>
           )}
         </div>
+
+        {/* Serial number search */}
+        {role === "service_technician" && (
+          <Card>
+            <CardContent className="py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex-1 max-w-md">
+                  <Input
+                    placeholder="Wpisz numer seryjny urządzenia..."
+                    value={serialNumber}
+                    onChange={(e) => setSerialNumber(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleFetchBySerial();
+                    }}
+                    maxLength={100}
+                  />
+                </div>
+                <Button 
+                  onClick={handleFetchBySerial} 
+                  disabled={fetchingBySerial || !serialNumber.trim()}
+                >
+                  {fetchingBySerial ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Search className="h-4 w-4 mr-2" />
+                  )}
+                  Przypisz po numerze
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {loading ? (
           <div className="flex justify-center py-12">
