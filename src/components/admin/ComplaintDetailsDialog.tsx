@@ -2,20 +2,21 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
+import { Loader2 } from "lucide-react";
 
 interface ComplaintDetailsDialogProps {
   complaint: any;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  isLoading?: boolean;
 }
 
 export function ComplaintDetailsDialog({
   complaint,
   open,
   onOpenChange,
+  isLoading = false,
 }: ComplaintDetailsDialogProps) {
-  if (!complaint) return null;
-
   const getStatusBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
       submitted: "secondary",
@@ -58,8 +59,16 @@ export function ComplaintDetailsDialog({
           <DialogTitle>Complaint Details</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Basic Info */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : !complaint ? (
+          <div className="text-center py-12 text-muted-foreground">
+            No complaint data available.
+          </div>
+        ) : (
+          <div className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Basic Information</CardTitle>
@@ -181,6 +190,7 @@ export function ComplaintDetailsDialog({
             </CardContent>
           </Card>
         </div>
+        )}
       </DialogContent>
     </Dialog>
   );
