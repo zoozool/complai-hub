@@ -9,6 +9,7 @@ import { EditComplaintDialog } from "./EditComplaintDialog";
 import { AssignTechnicianDialog } from "./AssignTechnicianDialog";
 import { DeleteComplaintDialog } from "./DeleteComplaintDialog";
 import { ComplaintDetailsDialog } from "./ComplaintDetailsDialog";
+import { useComplaintDetails } from "@/hooks/useComplaintDetails";
 
 interface ComplaintTableProps {
   complaints: any[];
@@ -20,7 +21,19 @@ export function ComplaintTable({ complaints, onRefresh, userRole }: ComplaintTab
   const [editingComplaint, setEditingComplaint] = useState(null);
   const [assigningComplaint, setAssigningComplaint] = useState(null);
   const [deletingComplaint, setDeletingComplaint] = useState(null);
-  const [viewingComplaint, setViewingComplaint] = useState(null);
+  const [viewingComplaintId, setViewingComplaintId] = useState<string | null>(null);
+  
+  const { complaint: viewingComplaint, isLoading: isLoadingDetails, fetchComplaint, clearComplaint } = useComplaintDetails();
+
+  const handleViewDetails = async (complaintId: string) => {
+    setViewingComplaintId(complaintId);
+    await fetchComplaint(complaintId);
+  };
+
+  const handleCloseDetails = () => {
+    setViewingComplaintId(null);
+    clearComplaint();
+  };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
@@ -98,7 +111,7 @@ export function ComplaintTable({ complaints, onRefresh, userRole }: ComplaintTab
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => setViewingComplaint(complaint)}>
+                      <DropdownMenuItem onClick={() => handleViewDetails(complaint.id)}>
                         <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </DropdownMenuItem>
@@ -162,8 +175,9 @@ export function ComplaintTable({ complaints, onRefresh, userRole }: ComplaintTab
 
       <ComplaintDetailsDialog
         complaint={viewingComplaint}
-        open={!!viewingComplaint}
-        onOpenChange={() => setViewingComplaint(null)}
+        open={!!viewingComplaintId}
+        onOpenChange={handleCloseDetails}
+        isLoading={isLoadingDetails}
       />
     </>
   );
