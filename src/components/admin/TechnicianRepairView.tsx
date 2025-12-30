@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Wrench, Package, Calculator, Save, Loader2, Play, CheckCircle } from "lucide-react";
+import { ArrowLeft, Wrench, Package, Calculator, Save, Loader2, Play, CheckCircle, Forward } from "lucide-react";
+import { TransferRepairDialog } from "./TransferRepairDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -67,6 +68,7 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
   const [useManualCost, setUseManualCost] = useState(false);
   const [selectedFixedFee, setSelectedFixedFee] = useState<string>("warranty");
   const [selectedParts, setSelectedParts] = useState<string[]>([]);
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -259,8 +261,25 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
               Zakończ naprawę
             </Button>
           )}
+          
+          {/* Transfer repair button */}
+          <Button 
+            variant="outline"
+            onClick={() => setTransferDialogOpen(true)}
+          >
+            <Forward className="mr-2 h-4 w-4" />
+            Przekaż naprawę
+          </Button>
         </div>
       </div>
+
+      {/* Transfer Repair Dialog */}
+      <TransferRepairDialog
+        open={transferDialogOpen}
+        onOpenChange={setTransferDialogOpen}
+        complaintId={complaint.id}
+        onSuccess={onBack}
+      />
 
       {/* Read-only Complaint Details */}
       <Card>
