@@ -164,12 +164,19 @@ export default function AcceptDevice() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      // Update complaint status to 'received' and set package number
+      // Update complaint status to 'received', set package number, and save confirmed package contents
       const { error: updateError } = await supabase
         .from("complaints")
         .update({
           status: "received",
           incoming_tracking_number: packageNumber.trim(),
+          // Save only confirmed items (what was actually received)
+          package_device: confirmedDevice,
+          package_original_packaging: confirmedPackaging,
+          package_mount: confirmedMount,
+          package_adapter: confirmedAdapter,
+          package_usb_cable: confirmedUsb,
+          package_receipt_copy: confirmedReceipt,
         })
         .eq("id", currentComplaint.id);
 
@@ -219,19 +226,9 @@ export default function AcceptDevice() {
     resetConfirmations();
   };
 
-  // Check if all declared items are confirmed
-  const allItemsConfirmed = () => {
-    if (!currentComplaint) return false;
-    
-    // Check each declared item
-    if (currentComplaint.package_device && !confirmedDevice) return false;
-    if (currentComplaint.package_original_packaging && !confirmedPackaging) return false;
-    if (currentComplaint.package_mount && !confirmedMount) return false;
-    if (currentComplaint.package_adapter && !confirmedAdapter) return false;
-    if (currentComplaint.package_usb_cable && !confirmedUsb) return false;
-    if (currentComplaint.package_receipt_copy && !confirmedReceipt) return false;
-    
-    return true;
+  // Check if at least device is confirmed (minimal requirement)
+  const canAcceptDevice = () => {
+    return currentComplaint !== null;
   };
 
   if (roleLoading) {
@@ -402,117 +399,111 @@ export default function AcceptDevice() {
                     Weryfikacja zawartości paczki
                   </h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Potwierdź, że zawartość paczki zgadza się z deklaracją klienta:
+                    Zaznacz elementy, które faktycznie znajdują się w paczce (deklaracja klienta poniżej):
                   </p>
                   
                   <div className="space-y-3">
-                    {currentComplaint.package_device && (
-                      <div className="flex items-center space-x-3 p-2 border rounded-md">
-                        <Checkbox 
-                          id="confirm-device" 
-                          checked={confirmedDevice}
-                          onCheckedChange={(checked) => setConfirmedDevice(checked === true)}
-                        />
-                        <Label htmlFor="confirm-device" className="flex-1 cursor-pointer">
-                          Urządzenie
-                        </Label>
-                        {confirmedDevice ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </div>
-                    )}
+                    <div className={`flex items-center space-x-3 p-2 border rounded-md ${currentComplaint.package_device ? 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800' : ''}`}>
+                      <Checkbox 
+                        id="confirm-device" 
+                        checked={confirmedDevice}
+                        onCheckedChange={(checked) => setConfirmedDevice(checked === true)}
+                      />
+                      <Label htmlFor="confirm-device" className="flex-1 cursor-pointer">
+                        Urządzenie
+                        {currentComplaint.package_device && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(zadeklarowane)</span>}
+                      </Label>
+                      {confirmedDevice ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
                     
-                    {currentComplaint.package_original_packaging && (
-                      <div className="flex items-center space-x-3 p-2 border rounded-md">
-                        <Checkbox 
-                          id="confirm-packaging" 
-                          checked={confirmedPackaging}
-                          onCheckedChange={(checked) => setConfirmedPackaging(checked === true)}
-                        />
-                        <Label htmlFor="confirm-packaging" className="flex-1 cursor-pointer">
-                          Oryginalne opakowanie
-                        </Label>
-                        {confirmedPackaging ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </div>
-                    )}
+                    <div className={`flex items-center space-x-3 p-2 border rounded-md ${currentComplaint.package_original_packaging ? 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800' : ''}`}>
+                      <Checkbox 
+                        id="confirm-packaging" 
+                        checked={confirmedPackaging}
+                        onCheckedChange={(checked) => setConfirmedPackaging(checked === true)}
+                      />
+                      <Label htmlFor="confirm-packaging" className="flex-1 cursor-pointer">
+                        Oryginalne opakowanie
+                        {currentComplaint.package_original_packaging && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(zadeklarowane)</span>}
+                      </Label>
+                      {confirmedPackaging ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
                     
-                    {currentComplaint.package_mount && (
-                      <div className="flex items-center space-x-3 p-2 border rounded-md">
-                        <Checkbox 
-                          id="confirm-mount" 
-                          checked={confirmedMount}
-                          onCheckedChange={(checked) => setConfirmedMount(checked === true)}
-                        />
-                        <Label htmlFor="confirm-mount" className="flex-1 cursor-pointer">
-                          Uchwyt
-                        </Label>
-                        {confirmedMount ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </div>
-                    )}
+                    <div className={`flex items-center space-x-3 p-2 border rounded-md ${currentComplaint.package_mount ? 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800' : ''}`}>
+                      <Checkbox 
+                        id="confirm-mount" 
+                        checked={confirmedMount}
+                        onCheckedChange={(checked) => setConfirmedMount(checked === true)}
+                      />
+                      <Label htmlFor="confirm-mount" className="flex-1 cursor-pointer">
+                        Uchwyt
+                        {currentComplaint.package_mount && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(zadeklarowane)</span>}
+                      </Label>
+                      {confirmedMount ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
                     
-                    {currentComplaint.package_adapter && (
-                      <div className="flex items-center space-x-3 p-2 border rounded-md">
-                        <Checkbox 
-                          id="confirm-adapter" 
-                          checked={confirmedAdapter}
-                          onCheckedChange={(checked) => setConfirmedAdapter(checked === true)}
-                        />
-                        <Label htmlFor="confirm-adapter" className="flex-1 cursor-pointer">
-                          Adapter / Ładowarka
-                        </Label>
-                        {confirmedAdapter ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </div>
-                    )}
+                    <div className={`flex items-center space-x-3 p-2 border rounded-md ${currentComplaint.package_adapter ? 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800' : ''}`}>
+                      <Checkbox 
+                        id="confirm-adapter" 
+                        checked={confirmedAdapter}
+                        onCheckedChange={(checked) => setConfirmedAdapter(checked === true)}
+                      />
+                      <Label htmlFor="confirm-adapter" className="flex-1 cursor-pointer">
+                        Adapter / Ładowarka
+                        {currentComplaint.package_adapter && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(zadeklarowane)</span>}
+                      </Label>
+                      {confirmedAdapter ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
                     
-                    {currentComplaint.package_usb_cable && (
-                      <div className="flex items-center space-x-3 p-2 border rounded-md">
-                        <Checkbox 
-                          id="confirm-usb" 
-                          checked={confirmedUsb}
-                          onCheckedChange={(checked) => setConfirmedUsb(checked === true)}
-                        />
-                        <Label htmlFor="confirm-usb" className="flex-1 cursor-pointer">
-                          Kabel USB
-                        </Label>
-                        {confirmedUsb ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </div>
-                    )}
+                    <div className={`flex items-center space-x-3 p-2 border rounded-md ${currentComplaint.package_usb_cable ? 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800' : ''}`}>
+                      <Checkbox 
+                        id="confirm-usb" 
+                        checked={confirmedUsb}
+                        onCheckedChange={(checked) => setConfirmedUsb(checked === true)}
+                      />
+                      <Label htmlFor="confirm-usb" className="flex-1 cursor-pointer">
+                        Kabel USB
+                        {currentComplaint.package_usb_cable && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(zadeklarowane)</span>}
+                      </Label>
+                      {confirmedUsb ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
                     
-                    {currentComplaint.package_receipt_copy && (
-                      <div className="flex items-center space-x-3 p-2 border rounded-md">
-                        <Checkbox 
-                          id="confirm-receipt" 
-                          checked={confirmedReceipt}
-                          onCheckedChange={(checked) => setConfirmedReceipt(checked === true)}
-                        />
-                        <Label htmlFor="confirm-receipt" className="flex-1 cursor-pointer">
-                          Kopia paragonu/faktury
-                        </Label>
-                        {confirmedReceipt ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </div>
-                    )}
+                    <div className={`flex items-center space-x-3 p-2 border rounded-md ${currentComplaint.package_receipt_copy ? 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800' : ''}`}>
+                      <Checkbox 
+                        id="confirm-receipt" 
+                        checked={confirmedReceipt}
+                        onCheckedChange={(checked) => setConfirmedReceipt(checked === true)}
+                      />
+                      <Label htmlFor="confirm-receipt" className="flex-1 cursor-pointer">
+                        Kopia paragonu/faktury
+                        {currentComplaint.package_receipt_copy && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(zadeklarowane)</span>}
+                      </Label>
+                      {confirmedReceipt ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -527,17 +518,10 @@ export default function AcceptDevice() {
                         To urządzenie zostało już przyjęte ({statusLabels[currentComplaint.status] || currentComplaint.status})
                       </p>
                     </div>
-                  ) : !allItemsConfirmed() ? (
-                    <div className="p-4 bg-muted rounded-md text-center">
-                      <AlertCircle className="h-5 w-5 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Potwierdź wszystkie zadeklarowane elementy paczki aby przyjąć urządzenie
-                      </p>
-                    </div>
                   ) : (
                     <Button 
                       onClick={handleAccept} 
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !canAcceptDevice()}
                       className="w-full"
                       size="lg"
                     >
