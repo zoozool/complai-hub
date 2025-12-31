@@ -44,7 +44,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <div>
                 <h1 className="text-xl font-bold text-primary-foreground">ComplaiHub</h1>
                 <p className="text-sm text-primary-foreground/70">
-                  {isBusinessPartner ? 'Business Partner Portal' : 'Client Portal'}
+                  {isBusinessPartner ? 'Portal Partnera Biznesowego' : 'Portal Klienta'}
                 </p>
               </div>
             </div>
@@ -58,8 +58,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 )}
                 <span className="text-sm">
                   {isBusinessPartner 
-                    ? userProfile?.company_name || 'Business Partner'
-                    : `${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || 'User'
+                    ? userProfile?.company_name || 'Partner biznesowy'
+                    : `${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || 'Użytkownik'
                   }
                 </span>
               </div>
@@ -70,7 +70,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="text-primary-foreground border-primary-foreground/20 hover:bg-primary-foreground/10"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+                Wyloguj
               </Button>
             </div>
           </div>
@@ -88,7 +88,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="flex items-center space-x-2"
               >
                 <FileText className="h-4 w-4" />
-                <span>My Complaints</span>
+                <span>Moje reklamacje</span>
               </Button>
             )}
 
@@ -99,7 +99,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="flex items-center space-x-2"
               >
                 <Plus className="h-4 w-4" />
-                <span>New Complaint</span>
+                <span>Nowa reklamacja</span>
               </Button>
             )}
 
@@ -110,7 +110,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="flex items-center space-x-2"
               >
                 <Truck className="h-4 w-4" />
-                <span>Schedule Pickup</span>
+                <span>Zaplanuj odbiór</span>
               </Button>
             )}
 
@@ -120,7 +120,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               className="flex items-center space-x-2"
             >
               <UserCircle className="h-4 w-4" />
-              <span>My Profile</span>
+              <span>Mój profil</span>
             </Button>
 
             {(isAdmin() || isEmployee() || isTechnician()) && (
@@ -130,7 +130,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="flex items-center space-x-2"
               >
                 <Settings className="h-4 w-4" />
-                <span>Admin Panel</span>
+                <span>Panel administracyjny</span>
               </Button>
             )}
           </div>

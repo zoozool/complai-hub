@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/table';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { pl } from 'date-fns/locale';
 import { FileText, Calendar, Package, Truck, Hash, Building, User } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
 
@@ -57,16 +58,16 @@ const Dashboard = () => {
 
   const getStatusBadge = (complaint: any) => {
     if (complaint.completion_date) {
-      return <Badge variant="secondary" className="bg-success text-success-foreground">Completed</Badge>;
+      return <Badge variant="secondary" className="bg-success text-success-foreground">Zakończona</Badge>;
     } else if (complaint.incoming_tracking_number || complaint.outgoing_tracking_number) {
-      return <Badge variant="secondary" className="bg-info text-info-foreground">In Progress</Badge>;
+      return <Badge variant="secondary" className="bg-info text-info-foreground">W trakcie</Badge>;
     } else {
-      return <Badge variant="secondary" className="bg-warning text-warning-foreground">Submitted</Badge>;
+      return <Badge variant="secondary" className="bg-warning text-warning-foreground">Zgłoszona</Badge>;
     }
   };
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'MMM dd, yyyy');
+    return format(new Date(dateString), 'dd MMM yyyy', { locale: pl });
   };
 
   if (loading) {
@@ -87,15 +88,15 @@ const Dashboard = () => {
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">
-                Welcome back, {isBusinessPartner 
+                Witaj, {isBusinessPartner 
                   ? userProfile?.company_name 
                   : `${userProfile?.first_name} ${userProfile?.last_name}`
                 }
               </h2>
               <p className="text-muted-foreground">
                 {isBusinessPartner 
-                  ? 'Manage your business complaints and schedule pickups'
-                  : 'Track your device complaints and repair status'
+                  ? 'Zarządzaj reklamacjami firmy i planuj odbiory'
+                  : 'Śledź swoje reklamacje i status napraw'
                 }
               </p>
             </div>
@@ -106,7 +107,7 @@ const Dashboard = () => {
                 <User className="h-5 w-5" />
               )}
               <span className="text-sm font-medium">
-                {isBusinessPartner ? 'Business Partner' : 'Individual Client'}
+                {isBusinessPartner ? 'Partner biznesowy' : 'Klient indywidualny'}
               </span>
             </div>
           </div>
@@ -116,7 +117,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Complaints</CardTitle>
+              <CardTitle className="text-sm font-medium">Wszystkie reklamacje</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -126,7 +127,7 @@ const Dashboard = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+              <CardTitle className="text-sm font-medium">W trakcie</CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -140,7 +141,7 @@ const Dashboard = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed</CardTitle>
+              <CardTitle className="text-sm font-medium">Zakończone</CardTitle>
               <Truck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -155,7 +156,7 @@ const Dashboard = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>Your Complaints</span>
+              <span>Twoje reklamacje</span>
               <div className="flex gap-2">
                 {!isBusinessPartner && (
                   <Button 
@@ -163,11 +164,11 @@ const Dashboard = () => {
                     onClick={() => navigate('/order-courier')}
                   >
                     <Package className="h-4 w-4 mr-2" />
-                    Order Courier / Parcel Locker
+                    Zamów kuriera / Paczkomat
                   </Button>
                 )}
                 <Button onClick={() => navigate('/new-complaint')}>
-                  Submit New Complaint
+                  Złóż nową reklamację
                 </Button>
               </div>
             </CardTitle>
@@ -176,12 +177,12 @@ const Dashboard = () => {
             {complaints.length === 0 ? (
               <div className="text-center py-12">
                 <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-muted-foreground mb-2">No complaints yet</h3>
+                <h3 className="text-lg font-medium text-muted-foreground mb-2">Brak reklamacji</h3>
                 <p className="text-muted-foreground mb-4">
-                  Submit your first complaint to get started
+                  Złóż swoją pierwszą reklamację, aby rozpocząć
                 </p>
                 <Button onClick={() => navigate('/new-complaint')}>
-                  Submit Complaint
+                  Złóż reklamację
                 </Button>
               </div>
             ) : (
@@ -189,14 +190,14 @@ const Dashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-dashboard-table-header">
-                      <TableHead>Device Serial</TableHead>
-                      <TableHead>Submission Date</TableHead>
+                      <TableHead>Numer seryjny</TableHead>
+                      <TableHead>Data zgłoszenia</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Incoming Tracking</TableHead>
-                      <TableHead>Outgoing Tracking</TableHead>
-                      {isBusinessPartner && <TableHead>Internal #</TableHead>}
-                      <TableHead>Completion Date</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead>Nr przesyłki przychodzącej</TableHead>
+                      <TableHead>Nr przesyłki wychodzącej</TableHead>
+                      {isBusinessPartner && <TableHead>Nr wewnętrzny</TableHead>}
+                      <TableHead>Data zakończenia</TableHead>
+                      <TableHead>Akcje</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -248,7 +249,7 @@ const Dashboard = () => {
                           {complaint.completion_date ? (
                             formatDate(complaint.completion_date)
                           ) : (
-                            <span className="text-muted-foreground">Pending</span>
+                            <span className="text-muted-foreground">W toku</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -257,7 +258,7 @@ const Dashboard = () => {
                             size="sm"
                             onClick={() => navigate(`/complaint/${complaint.id}`)}
                           >
-                            View Details
+                            Szczegóły
                           </Button>
                         </TableCell>
                       </TableRow>

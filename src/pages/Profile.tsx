@@ -74,8 +74,8 @@ export default function Profile() {
     
     if (newPassword !== confirmPassword) {
       toast({
-        title: "Error",
-        description: "New passwords do not match",
+        title: "Błąd",
+        description: "Nowe hasła nie są identyczne",
         variant: "destructive",
       });
       return;
@@ -83,8 +83,8 @@ export default function Profile() {
 
     if (newPassword.length < 6) {
       toast({
-        title: "Error",
-        description: "New password must be at least 6 characters",
+        title: "Błąd",
+        description: "Nowe hasło musi mieć co najmniej 6 znaków",
         variant: "destructive",
       });
       return;
@@ -101,8 +101,8 @@ export default function Profile() {
 
       if (signInError) {
         toast({
-          title: "Error",
-          description: "Old password is incorrect",
+          title: "Błąd",
+          description: "Stare hasło jest nieprawidłowe",
           variant: "destructive",
         });
         setPasswordLoading(false);
@@ -117,8 +117,8 @@ export default function Profile() {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Password changed successfully. Please log in again.",
+        title: "Sukces",
+        description: "Hasło zostało zmienione. Zaloguj się ponownie.",
       });
 
       // Sign out and redirect to auth page
@@ -126,7 +126,7 @@ export default function Profile() {
       navigate('/auth');
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Błąd",
         description: error.message,
         variant: "destructive",
       });
@@ -168,12 +168,12 @@ export default function Profile() {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Your profile has been successfully updated.",
+        title: "Sukces",
+        description: "Twój profil został zaktualizowany.",
       });
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Błąd",
         description: error.message,
         variant: "destructive",
       });
@@ -185,23 +185,23 @@ export default function Profile() {
   return (
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8">My Profile</h1>
+        <h1 className="text-3xl font-bold mb-8">Mój profil</h1>
 
         {/* Language Selection Section */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              Language / Język
+              Język / Language
             </CardTitle>
-            <CardDescription>Select your preferred language</CardDescription>
+            <CardDescription>Wybierz preferowany język</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="max-w-xs">
-              <Label htmlFor="language">Application Language</Label>
+              <Label htmlFor="language">Język aplikacji</Label>
               <Select value={language} onValueChange={setLanguage}>
                 <SelectTrigger id="language" className="mt-2">
-                  <SelectValue placeholder="Select language" />
+                  <SelectValue placeholder="Wybierz język" />
                 </SelectTrigger>
                 <SelectContent>
                   {LANGUAGES.map((lang) => (
@@ -221,13 +221,13 @@ export default function Profile() {
         {/* Change Password Section */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Change Password</CardTitle>
-            <CardDescription>Update your account password</CardDescription>
+            <CardTitle>Zmiana hasła</CardTitle>
+            <CardDescription>Zaktualizuj hasło do konta</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div>
-                <Label htmlFor="oldPassword">Old Password</Label>
+                <Label htmlFor="oldPassword">Stare hasło</Label>
                 <Input
                   id="oldPassword"
                   type="password"
@@ -237,7 +237,7 @@ export default function Profile() {
                 />
               </div>
               <div>
-                <Label htmlFor="newPassword">New Password</Label>
+                <Label htmlFor="newPassword">Nowe hasło</Label>
                 <Input
                   id="newPassword"
                   type="password"
@@ -247,7 +247,7 @@ export default function Profile() {
                 />
               </div>
               <div>
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Label htmlFor="confirmPassword">Potwierdź nowe hasło</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -258,7 +258,7 @@ export default function Profile() {
               </div>
               <Button type="submit" disabled={passwordLoading}>
                 {passwordLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Password
+                Zapisz hasło
               </Button>
             </form>
           </CardContent>
@@ -267,17 +267,17 @@ export default function Profile() {
         {/* Profile Information Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <CardDescription>Update your personal and contact information</CardDescription>
+            <CardTitle>Dane profilu</CardTitle>
+            <CardDescription>Zaktualizuj dane osobowe i kontaktowe</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleProfileUpdate} className="space-y-6">
               {/* Account Data */}
               <div>
-                <h3 className="text-lg font-semibold mb-4">Account Data</h3>
+                <h3 className="text-lg font-semibold mb-4">Dane konta</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName">Imię</Label>
                     <Input
                       id="firstName"
                       value={firstName}
@@ -285,7 +285,7 @@ export default function Profile() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName">Nazwisko</Label>
                     <Input
                       id="lastName"
                       value={lastName}
@@ -293,7 +293,7 @@ export default function Profile() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">Adres e-mail</Label>
                     <Input
                       id="email"
                       type="email"
@@ -303,7 +303,7 @@ export default function Profile() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Label htmlFor="phoneNumber">Numer telefonu</Label>
                     <Input
                       id="phoneNumber"
                       type="tel"
@@ -318,10 +318,10 @@ export default function Profile() {
 
               {/* Address Data */}
               <div>
-                <h3 className="text-lg font-semibold mb-4">Address Data</h3>
+                <h3 className="text-lg font-semibold mb-4">Dane adresowe</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <Label htmlFor="street">Street</Label>
+                    <Label htmlFor="street">Ulica</Label>
                     <Input
                       id="street"
                       value={street}
@@ -329,7 +329,7 @@ export default function Profile() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="postalCode">Postal Code</Label>
+                    <Label htmlFor="postalCode">Kod pocztowy</Label>
                     <Input
                       id="postalCode"
                       value={postalCode}
@@ -337,7 +337,7 @@ export default function Profile() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="city">City</Label>
+                    <Label htmlFor="city">Miejscowość</Label>
                     <Input
                       id="city"
                       value={city}
@@ -345,7 +345,7 @@ export default function Profile() {
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <Label htmlFor="country">Country</Label>
+                    <Label htmlFor="country">Kraj</Label>
                     <Input
                       id="country"
                       value="Polska"
@@ -361,10 +361,10 @@ export default function Profile() {
                 <>
                   <Separator />
                   <div>
-                    <h3 className="text-lg font-semibold mb-4">Business Information</h3>
+                    <h3 className="text-lg font-semibold mb-4">Dane firmy</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="md:col-span-2">
-                        <Label htmlFor="companyName">Company Name</Label>
+                        <Label htmlFor="companyName">Nazwa firmy</Label>
                         <Input
                           id="companyName"
                           value={companyName}
@@ -372,7 +372,7 @@ export default function Profile() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="vatId">VAT ID (NIP)</Label>
+                        <Label htmlFor="vatId">NIP</Label>
                         <Input
                           id="vatId"
                           value={vatId}
@@ -380,7 +380,7 @@ export default function Profile() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="companyAddress">Company Address</Label>
+                        <Label htmlFor="companyAddress">Adres firmy</Label>
                         <Input
                           id="companyAddress"
                           value={companyAddress}
@@ -388,7 +388,7 @@ export default function Profile() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="serviceContactEmail">Service Contact Email</Label>
+                        <Label htmlFor="serviceContactEmail">E-mail kontaktowy serwisu</Label>
                         <Input
                           id="serviceContactEmail"
                           type="email"
@@ -397,7 +397,7 @@ export default function Profile() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="serviceContactPhone">Service Contact Phone</Label>
+                        <Label htmlFor="serviceContactPhone">Telefon kontaktowy serwisu</Label>
                         <Input
                           id="serviceContactPhone"
                           type="tel"
@@ -412,7 +412,7 @@ export default function Profile() {
 
               <Button type="submit" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Changes
+                Zapisz zmiany
               </Button>
             </form>
           </CardContent>

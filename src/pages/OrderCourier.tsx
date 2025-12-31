@@ -57,8 +57,8 @@ const OrderCourier = () => {
     if (!user) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "You must be logged in to place an order.",
+        title: "Błąd",
+        description: "Musisz być zalogowany, aby złożyć zamówienie.",
       });
       return;
     }
@@ -86,8 +86,8 @@ const OrderCourier = () => {
       if (error) throw error;
 
       toast({
-        title: "Order Registered",
-        description: "Thank you! Your order has been registered. Payment processing will be available soon.",
+        title: "Zamówienie zarejestrowane",
+        description: "Dziękujemy! Twoje zamówienie zostało zarejestrowane. Obsługa płatności będzie dostępna wkrótce.",
       });
 
       setTimeout(() => {
@@ -96,8 +96,8 @@ const OrderCourier = () => {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to submit order. Please try again.",
+        title: "Błąd",
+        description: error.message || "Nie udało się złożyć zamówienia. Spróbuj ponownie.",
       });
     } finally {
       setLoading(false);
@@ -110,23 +110,23 @@ const OrderCourier = () => {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
             <Package className="h-8 w-8" />
-            Order Courier / Parcel Locker
+            Zamów kuriera / Paczkomat
           </h1>
           <p className="text-muted-foreground mt-2">
-            Complete the form below to order courier or parcel locker service.
+            Wypełnij poniższy formularz, aby zamówić usługę kurierską lub nadać paczkę przez paczkomat.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Personal Data</CardTitle>
-              <CardDescription>Your contact information</CardDescription>
+              <CardTitle>Dane osobowe</CardTitle>
+              <CardDescription>Twoje dane kontaktowe</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="first_name">First Name *</Label>
+                  <Label htmlFor="first_name">Imię *</Label>
                   <Input
                     id="first_name"
                     name="first_name"
@@ -136,7 +136,7 @@ const OrderCourier = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="last_name">Last Name *</Label>
+                  <Label htmlFor="last_name">Nazwisko *</Label>
                   <Input
                     id="last_name"
                     name="last_name"
@@ -148,7 +148,7 @@ const OrderCourier = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
+                <Label htmlFor="email">Adres e-mail *</Label>
                 <Input
                   id="email"
                   name="email"
@@ -163,13 +163,13 @@ const OrderCourier = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Invoice Data</CardTitle>
-              <CardDescription>Billing information (optional for individuals)</CardDescription>
+              <CardTitle>Dane do faktury</CardTitle>
+              <CardDescription>Dane rozliczeniowe (opcjonalne dla osób fizycznych)</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="company_name">Company Name</Label>
+                  <Label htmlFor="company_name">Nazwa firmy</Label>
                   <Input
                     id="company_name"
                     name="company_name"
@@ -178,7 +178,7 @@ const OrderCourier = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="vat_id">VAT ID (NIP)</Label>
+                  <Label htmlFor="vat_id">NIP</Label>
                   <Input
                     id="vat_id"
                     name="vat_id"
@@ -189,7 +189,7 @@ const OrderCourier = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="street">Street *</Label>
+                <Label htmlFor="street">Ulica *</Label>
                 <Input
                   id="street"
                   name="street"
@@ -201,7 +201,7 @@ const OrderCourier = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="postal_code">Postal Code *</Label>
+                  <Label htmlFor="postal_code">Kod pocztowy *</Label>
                   <Input
                     id="postal_code"
                     name="postal_code"
@@ -211,7 +211,7 @@ const OrderCourier = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="city">City *</Label>
+                  <Label htmlFor="city">Miejscowość *</Label>
                   <Input
                     id="city"
                     name="city"
@@ -221,7 +221,7 @@ const OrderCourier = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="country">Country *</Label>
+                  <Label htmlFor="country">Kraj *</Label>
                   <Input
                     id="country"
                     name="country"
@@ -236,12 +236,12 @@ const OrderCourier = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle>Podsumowanie zamówienia</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between text-lg font-semibold">
-                <span>Total Price (Gross):</span>
-                <span className="text-primary">15.00 PLN</span>
+                <span>Cena brutto:</span>
+                <span className="text-primary">15,00 PLN</span>
               </div>
             </CardContent>
           </Card>
@@ -253,14 +253,14 @@ const OrderCourier = () => {
               onClick={() => navigate('/dashboard')}
               className="flex-1"
             >
-              Cancel
+              Anuluj
             </Button>
             <Button
               type="submit"
               disabled={loading}
               className="flex-1"
             >
-              {loading ? 'Processing...' : 'Pay and Order'}
+              {loading ? 'Przetwarzanie...' : 'Zapłać i zamów'}
             </Button>
           </div>
         </form>

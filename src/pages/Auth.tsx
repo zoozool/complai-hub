@@ -65,15 +65,15 @@ const Auth = () => {
       const { error } = await signIn(loginForm.email, loginForm.password);
       if (error) {
         toast({
-          title: "Login Failed",
+          title: "Błąd logowania",
           description: error.message,
           variant: "destructive",
         });
       }
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Błąd",
+        description: "Wystąpił nieoczekiwany błąd",
         variant: "destructive",
       });
     } finally {
@@ -86,8 +86,8 @@ const Auth = () => {
     
     if (registerForm.password !== registerForm.confirmPassword) {
       toast({
-        title: "Registration Failed",
-        description: "Passwords do not match",
+        title: "Błąd rejestracji",
+        description: "Hasła nie są identyczne",
         variant: "destructive",
       });
       return;
@@ -95,8 +95,8 @@ const Auth = () => {
 
     if (registerForm.password.length < 6) {
       toast({
-        title: "Registration Failed",
-        description: "Password must be at least 6 characters long",
+        title: "Błąd rejestracji",
+        description: "Hasło musi mieć co najmniej 6 znaków",
         variant: "destructive",
       });
       return;
@@ -123,21 +123,21 @@ const Auth = () => {
       
       if (error) {
         toast({
-          title: "Registration Failed",
+          title: "Błąd rejestracji",
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Registration Successful",
-          description: "Please check your email for verification instructions",
+          title: "Rejestracja udana",
+          description: "Sprawdź swoją skrzynkę e-mail, aby potwierdzić konto",
         });
         setActiveTab('signin');
       }
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Błąd",
+        description: "Wystąpił nieoczekiwany błąd",
         variant: "destructive",
       });
     } finally {
@@ -156,22 +156,22 @@ const Auth = () => {
 
       if (error) {
         toast({
-          title: "Error",
+          title: "Błąd",
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Email Sent",
-          description: "Check your email for a password reset link.",
+          title: "E-mail wysłany",
+          description: "Sprawdź swoją skrzynkę e-mail, aby zresetować hasło.",
         });
         setForgotPasswordOpen(false);
         setForgotPasswordEmail('');
       }
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Błąd",
+        description: "Wystąpił nieoczekiwany błąd",
         variant: "destructive",
       });
     } finally {
@@ -187,36 +187,36 @@ const Auth = () => {
             <Shield className="h-12 w-12 text-primary" />
           </div>
           <h1 className="text-3xl font-bold text-foreground">ComplaiHub</h1>
-          <p className="text-muted-foreground mt-2">Product Complaint Management Portal</p>
+          <p className="text-muted-foreground mt-2">Portal zarządzania reklamacjami</p>
         </div>
 
         <Card className="shadow-card">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="signin">Logowanie</TabsTrigger>
+              <TabsTrigger value="register">Rejestracja</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
               <CardHeader>
-                <CardTitle>Welcome Back</CardTitle>
-                <CardDescription>Sign in to your account to manage complaints</CardDescription>
+                <CardTitle>Witaj ponownie</CardTitle>
+                <CardDescription>Zaloguj się, aby zarządzać reklamacjami</CardDescription>
               </CardHeader>
               <form onSubmit={handleLogin}>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label htmlFor="login-email">Email</Label>
+                    <Label htmlFor="login-email">E-mail</Label>
                     <Input
                       id="login-email"
                       type="email"
                       value={loginForm.email}
                       onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="your@email.com"
+                      placeholder="twoj@email.com"
                       required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="login-password">Password</Label>
+                    <Label htmlFor="login-password">Hasło</Label>
                     <Input
                       id="login-password"
                       type="password"
@@ -233,7 +233,7 @@ const Auth = () => {
                         onCheckedChange={(checked) => setLoginForm(prev => ({ ...prev, rememberMe: checked === true }))}
                       />
                       <Label htmlFor="remember-me" className="text-sm font-normal cursor-pointer">
-                        Remember me
+                        Zapamiętaj mnie
                       </Label>
                     </div>
                     <button
@@ -241,22 +241,22 @@ const Auth = () => {
                       onClick={() => setForgotPasswordOpen(true)}
                       className="text-sm text-primary hover:underline"
                     >
-                      Forgot password?
+                      Zapomniałeś hasła?
                     </button>
                   </div>
                   
                   <div className="bg-accent/50 p-4 rounded-lg">
-                    <h4 className="font-medium mb-2">Demo Accounts:</h4>
+                    <h4 className="font-medium mb-2">Konta demo:</h4>
                     <div className="text-sm space-y-1">
-                      <p><strong>Individual:</strong> test.client@example.com / Test123!</p>
-                      <p><strong>Business:</strong> test.partner@example.com / Partner123!</p>
+                      <p><strong>Klient indywidualny:</strong> test.client@example.com / Test123!</p>
+                      <p><strong>Partner biznesowy:</strong> test.partner@example.com / Partner123!</p>
                     </div>
                   </div>
                 </CardContent>
                 <CardFooter>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Sign In
+                    Zaloguj się
                   </Button>
                 </CardFooter>
               </form>
@@ -264,13 +264,13 @@ const Auth = () => {
 
             <TabsContent value="register">
               <CardHeader>
-                <CardTitle>Create Account</CardTitle>
-                <CardDescription>Register to start submitting complaints</CardDescription>
+                <CardTitle>Utwórz konto</CardTitle>
+                <CardDescription>Zarejestruj się, aby zgłaszać reklamacje</CardDescription>
               </CardHeader>
               <form onSubmit={handleRegister}>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label>Account Type</Label>
+                    <Label>Typ konta</Label>
                     <RadioGroup
                       value={registerForm.userType}
                       onValueChange={(value) => setRegisterForm(prev => ({ ...prev, userType: value }))}
@@ -280,14 +280,14 @@ const Auth = () => {
                         <RadioGroupItem value="individual" id="individual" />
                         <Label htmlFor="individual" className="flex items-center">
                           <User className="mr-2 h-4 w-4" />
-                          Individual Client
+                          Klient indywidualny
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="business_partner" id="business" />
                         <Label htmlFor="business" className="flex items-center">
                           <Building className="mr-2 h-4 w-4" />
-                          Business Partner
+                          Partner biznesowy
                         </Label>
                       </div>
                     </RadioGroup>
@@ -295,7 +295,7 @@ const Auth = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName">Imię</Label>
                       <Input
                         id="firstName"
                         value={registerForm.firstName}
@@ -304,7 +304,7 @@ const Auth = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="lastName">Last Name</Label>
+                      <Label htmlFor="lastName">Nazwisko</Label>
                       <Input
                         id="lastName"
                         value={registerForm.lastName}
@@ -315,19 +315,19 @@ const Auth = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="register-email">Email</Label>
+                    <Label htmlFor="register-email">E-mail</Label>
                     <Input
                       id="register-email"
                       type="email"
                       value={registerForm.email}
                       onChange={(e) => setRegisterForm(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="your@email.com"
+                      placeholder="twoj@email.com"
                       required
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label htmlFor="phone">Numer telefonu</Label>
                     <Input
                       id="phone"
                       value={registerForm.phoneNumber}
@@ -340,7 +340,7 @@ const Auth = () => {
                   {registerForm.userType === 'business_partner' && (
                     <>
                       <div>
-                        <Label htmlFor="companyName">Company Name</Label>
+                        <Label htmlFor="companyName">Nazwa firmy</Label>
                         <Input
                           id="companyName"
                           value={registerForm.companyName}
@@ -349,7 +349,7 @@ const Auth = () => {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="vatId">VAT ID (NIP)</Label>
+                        <Label htmlFor="vatId">NIP</Label>
                         <Input
                           id="vatId"
                           value={registerForm.vatId}
@@ -359,7 +359,7 @@ const Auth = () => {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="companyAddress">Company Address</Label>
+                        <Label htmlFor="companyAddress">Adres firmy</Label>
                         <Input
                           id="companyAddress"
                           value={registerForm.companyAddress}
@@ -368,7 +368,7 @@ const Auth = () => {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="serviceEmail">Service Contact Email</Label>
+                        <Label htmlFor="serviceEmail">E-mail kontaktowy serwisu</Label>
                         <Input
                           id="serviceEmail"
                           type="email"
@@ -378,7 +378,7 @@ const Auth = () => {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="servicePhone">Service Contact Phone</Label>
+                        <Label htmlFor="servicePhone">Telefon kontaktowy serwisu</Label>
                         <Input
                           id="servicePhone"
                           value={registerForm.serviceContactPhone}
@@ -391,7 +391,7 @@ const Auth = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="register-password">Password</Label>
+                      <Label htmlFor="register-password">Hasło</Label>
                       <Input
                         id="register-password"
                         type="password"
@@ -401,7 +401,7 @@ const Auth = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <Label htmlFor="confirmPassword">Potwierdź hasło</Label>
                       <Input
                         id="confirmPassword"
                         type="password"
@@ -415,7 +415,7 @@ const Auth = () => {
                 <CardFooter>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Create Account
+                    Utwórz konto
                   </Button>
                 </CardFooter>
               </form>
@@ -427,32 +427,32 @@ const Auth = () => {
       <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reset Password</DialogTitle>
+            <DialogTitle>Resetowanie hasła</DialogTitle>
             <DialogDescription>
-              Enter your email address and we'll send you a link to reset your password.
+              Wprowadź swój adres e-mail, a wyślemy Ci link do zresetowania hasła.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleForgotPassword}>
             <div className="space-y-4 py-4">
               <div>
-                <Label htmlFor="forgot-email">Email</Label>
+                <Label htmlFor="forgot-email">E-mail</Label>
                 <Input
                   id="forgot-email"
                   type="email"
                   value={forgotPasswordEmail}
                   onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  placeholder="twoj@email.com"
                   required
                 />
               </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setForgotPasswordOpen(false)}>
-                Cancel
+                Anuluj
               </Button>
               <Button type="submit" disabled={isSendingReset}>
                 {isSendingReset && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Send Reset Link
+                Wyślij link
               </Button>
             </DialogFooter>
           </form>
