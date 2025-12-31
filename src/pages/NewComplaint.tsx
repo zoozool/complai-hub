@@ -67,8 +67,15 @@ const NewComplaint = () => {
         ...prev,
         returnFirstName: prev.returnFirstName || userProfile.first_name || '',
         returnLastName: prev.returnLastName || userProfile.last_name || '',
+        returnStreet: prev.returnStreet || userProfile.street || '',
+        returnPostalCode: prev.returnPostalCode || userProfile.postal_code || '',
+        returnCity: prev.returnCity || userProfile.city || '',
         returnPhone: prev.returnPhone || userProfile.phone_number || '',
         returnEmail: prev.returnEmail || userProfile.email || '',
+        // Pre-fill VAT invoice fields for business partners
+        invoiceCompanyName: prev.invoiceCompanyName || userProfile.company_name || '',
+        invoiceVatId: prev.invoiceVatId || userProfile.vat_id || '',
+        invoiceAddress: prev.invoiceAddress || userProfile.company_address || '',
       }));
     }
   }, [userProfile]);
