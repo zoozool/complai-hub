@@ -51,6 +51,9 @@ export default function AcceptDevice() {
         return;
       }
 
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
       // Update complaint status to 'received' and set package number
       const { error: updateError } = await supabase
         .from("complaints")
@@ -61,6 +64,16 @@ export default function AcceptDevice() {
         .eq("id", complaint.id);
 
       if (updateError) throw updateError;
+
+      // Log status change in history
+      await supabase
+        .from("complaint_status_history")
+        .insert({
+          complaint_id: complaint.id,
+          old_status: complaint.status,
+          new_status: "received",
+          changed_by: user?.id,
+        });
 
       setFoundComplaint(complaint);
       
