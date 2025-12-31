@@ -60,7 +60,7 @@ export default function Profile() {
       setStreet(userProfile.street || '');
       setPostalCode(userProfile.postal_code || '');
       setCity(userProfile.city || '');
-      setCountry(userProfile.country || '');
+      setCountry(userProfile.country || 'Polska');
       setCompanyName(userProfile.company_name || '');
       setVatId(userProfile.vat_id || '');
       setCompanyAddress(userProfile.company_address || '');
@@ -298,7 +298,8 @@ export default function Profile() {
                       id="email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      disabled
+                      className="bg-muted"
                     />
                   </div>
                   <div>
@@ -347,8 +348,9 @@ export default function Profile() {
                     <Label htmlFor="country">Country</Label>
                     <Input
                       id="country"
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
+                      value="Polska"
+                      disabled
+                      className="bg-muted"
                     />
                   </div>
                 </div>
