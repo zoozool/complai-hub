@@ -123,6 +123,31 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
     );
   };
 
+  const saveSelectedParts = async () => {
+    // First delete existing parts for this complaint
+    await supabase
+      .from("complaint_parts")
+      .delete()
+      .eq("complaint_id", complaint.id);
+
+    // Then insert selected parts
+    if (selectedParts.length > 0) {
+      const partsToInsert = selectedParts.map(partId => {
+        const part = spareParts.find(p => p.id === partId);
+        return {
+          complaint_id: complaint.id,
+          spare_part_id: partId,
+          spare_part_name: part?.name || "",
+          spare_part_price: part?.price || 0
+        };
+      });
+
+      await supabase
+        .from("complaint_parts")
+        .insert(partsToInsert);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -136,6 +161,9 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
         .eq("id", complaint.id);
 
       if (error) throw error;
+
+      // Save selected parts
+      await saveSelectedParts();
 
       toast({
         title: "Zapisano",
@@ -173,6 +201,11 @@ export function TechnicianRepairView({ complaint, onBack, onSuccess }: Technicia
         .eq("id", complaint.id);
 
       if (error) throw error;
+
+      // Save selected parts when completing repair
+      if (newStatus === "completed") {
+        await saveSelectedParts();
+      }
 
       setCurrentStatus(newStatus);
       toast({
