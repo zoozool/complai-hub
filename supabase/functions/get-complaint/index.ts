@@ -43,12 +43,12 @@ serve(async (req) => {
 
     console.log('User authenticated:', user.id);
 
-    // Check if user has admin role
+    // Check if user has admin or employee role
     const { data: roleData, error: roleError } = await supabaseAdmin
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
-      .eq('role', 'main_administrator')
+      .in('role', ['main_administrator', 'employee'])
       .maybeSingle();
 
     if (roleError) {
@@ -60,9 +60,9 @@ serve(async (req) => {
     }
 
     if (!roleData) {
-      console.log('User is not an admin:', user.id);
+      console.log('User does not have required role:', user.id);
       return new Response(
-        JSON.stringify({ error: 'Access denied. Admin role required.' }),
+        JSON.stringify({ error: 'Access denied. Admin or Employee role required.' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
