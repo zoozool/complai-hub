@@ -50,6 +50,8 @@ const NewComplaint = () => {
     returnEmail: userProfile?.email || '',
     acceptedTerms: false,
     internalComplaintNumber: '',
+    // Document type: 'receipt' or 'invoice'
+    documentType: 'receipt' as 'receipt' | 'invoice',
     // VAT Invoice fields
     invoiceCompanyName: '',
     invoiceVatId: '',
@@ -123,8 +125,8 @@ const NewComplaint = () => {
         ...packageData,
       };
 
-      // Add VAT invoice data only if not warranty repair
-      if (!formData.warrantyRepair) {
+      // Add VAT invoice data only if invoice document type is selected
+      if (formData.documentType === 'invoice') {
         complaintData.invoice_company_name = formData.invoiceCompanyName;
         complaintData.invoice_vat_id = formData.invoiceVatId;
         complaintData.invoice_address = formData.invoiceAddress;
@@ -388,68 +390,94 @@ const NewComplaint = () => {
             </CardContent>
           </Card>
 
-          {/* VAT Invoice Data - only when not warranty repair */}
-          {!formData.warrantyRepair && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Dane do faktury VAT</CardTitle>
-                <CardDescription>Wypełnij dane do wystawienia faktury</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-2">
-                    <Label htmlFor="invoiceCompanyName">Nazwa firmy</Label>
-                    <Input
-                      id="invoiceCompanyName"
-                      value={formData.invoiceCompanyName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, invoiceCompanyName: e.target.value }))}
-                      placeholder="Nazwa firmy lub imię i nazwisko"
-                    />
-                  </div>
+          {/* Document Type Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Dokument sprzedaży</CardTitle>
+              <CardDescription>Wybierz rodzaj dokumentu</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <RadioGroup
+                value={formData.documentType}
+                onValueChange={(value: 'receipt' | 'invoice') => 
+                  setFormData(prev => ({ ...prev, documentType: value }))
+                }
+                className="flex flex-col space-y-3"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="receipt" id="receipt" />
+                  <Label htmlFor="receipt">Paragon</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="invoice" id="invoice" />
+                  <Label htmlFor="invoice">Faktura VAT</Label>
+                </div>
+              </RadioGroup>
 
-                  <div>
-                    <Label htmlFor="invoiceVatId">NIP</Label>
-                    <Input
-                      id="invoiceVatId"
-                      value={formData.invoiceVatId}
-                      onChange={(e) => setFormData(prev => ({ ...prev, invoiceVatId: e.target.value }))}
-                      placeholder="Numer NIP"
-                    />
-                  </div>
+              {/* VAT Invoice fields - only when invoice is selected */}
+              {formData.documentType === 'invoice' && (
+                <div className="mt-6 pt-6 border-t space-y-6">
+                  <h4 className="font-medium">Dane do faktury VAT</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
+                      <Label htmlFor="invoiceCompanyName">Nazwa firmy *</Label>
+                      <Input
+                        id="invoiceCompanyName"
+                        value={formData.invoiceCompanyName}
+                        onChange={(e) => setFormData(prev => ({ ...prev, invoiceCompanyName: e.target.value }))}
+                        placeholder="Nazwa firmy lub imię i nazwisko"
+                        required
+                      />
+                    </div>
 
-                  <div>
-                    <Label htmlFor="invoiceAddress">Adres</Label>
-                    <Input
-                      id="invoiceAddress"
-                      value={formData.invoiceAddress}
-                      onChange={(e) => setFormData(prev => ({ ...prev, invoiceAddress: e.target.value }))}
-                      placeholder="Ulica i numer"
-                    />
-                  </div>
+                    <div>
+                      <Label htmlFor="invoiceVatId">NIP *</Label>
+                      <Input
+                        id="invoiceVatId"
+                        value={formData.invoiceVatId}
+                        onChange={(e) => setFormData(prev => ({ ...prev, invoiceVatId: e.target.value }))}
+                        placeholder="Numer NIP"
+                        required
+                      />
+                    </div>
 
-                  <div>
-                    <Label htmlFor="invoicePostalCode">Kod pocztowy</Label>
-                    <Input
-                      id="invoicePostalCode"
-                      value={formData.invoicePostalCode}
-                      onChange={(e) => setFormData(prev => ({ ...prev, invoicePostalCode: e.target.value }))}
-                      placeholder="00-000"
-                    />
-                  </div>
+                    <div>
+                      <Label htmlFor="invoiceAddress">Adres *</Label>
+                      <Input
+                        id="invoiceAddress"
+                        value={formData.invoiceAddress}
+                        onChange={(e) => setFormData(prev => ({ ...prev, invoiceAddress: e.target.value }))}
+                        placeholder="Ulica i numer"
+                        required
+                      />
+                    </div>
 
-                  <div>
-                    <Label htmlFor="invoiceCity">Miejscowość</Label>
-                    <Input
-                      id="invoiceCity"
-                      value={formData.invoiceCity}
-                      onChange={(e) => setFormData(prev => ({ ...prev, invoiceCity: e.target.value }))}
-                      placeholder="Miejscowość"
-                    />
+                    <div>
+                      <Label htmlFor="invoicePostalCode">Kod pocztowy *</Label>
+                      <Input
+                        id="invoicePostalCode"
+                        value={formData.invoicePostalCode}
+                        onChange={(e) => setFormData(prev => ({ ...prev, invoicePostalCode: e.target.value }))}
+                        placeholder="00-000"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="invoiceCity">Miejscowość *</Label>
+                      <Input
+                        id="invoiceCity"
+                        value={formData.invoiceCity}
+                        onChange={(e) => setFormData(prev => ({ ...prev, invoiceCity: e.target.value }))}
+                        placeholder="Miejscowość"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              )}
+            </CardContent>
+          </Card>
 
           {/* Package Contents */}
           <Card>
