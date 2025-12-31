@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useRole } from "@/hooks/useRole";
-import { Smartphone, Search, ArrowLeft, CheckCircle, AlertCircle, Wrench, ClipboardCheck } from "lucide-react";
+import { Smartphone, Search, ArrowLeft, CheckCircle, AlertCircle, Wrench, ClipboardCheck, Package } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
@@ -44,6 +44,12 @@ interface StatusHistoryEntry {
   };
 }
 
+interface UsedPart {
+  id: string;
+  spare_part_name: string;
+  spare_part_price: number;
+}
+
 const statusLabels: Record<string, string> = {
   submitted: "Zgłoszone",
   received: "W serwisie",
@@ -76,6 +82,7 @@ export default function VerifyDevice() {
   
   const [complaint, setComplaint] = useState<Complaint | null>(null);
   const [statusHistory, setStatusHistory] = useState<StatusHistoryEntry[]>([]);
+  const [usedParts, setUsedParts] = useState<UsedPart[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
   
   // Verification checklist
@@ -123,6 +130,7 @@ export default function VerifyDevice() {
       if (!complaints || complaints.length === 0) {
         setComplaint(null);
         setStatusHistory([]);
+        setUsedParts([]);
         setSearchPerformed(true);
         toast({
           title: "Nie znaleziono",
@@ -161,6 +169,14 @@ export default function VerifyDevice() {
           profile: profileMap[h.changed_by]
         })));
       }
+
+      // Fetch used parts
+      const { data: parts } = await supabase
+        .from("complaint_parts")
+        .select("id, spare_part_name, spare_part_price")
+        .eq("complaint_id", foundComplaint.id);
+
+      setUsedParts(parts || []);
       
     } catch (error: any) {
       console.error("Error searching:", error);
@@ -272,6 +288,7 @@ export default function VerifyDevice() {
     setDeviceNumber("");
     setComplaint(null);
     setStatusHistory([]);
+    setUsedParts([]);
     setSearchPerformed(false);
     resetChecklist();
   };
@@ -443,12 +460,39 @@ export default function VerifyDevice() {
                   </>
                 )}
 
+                {/* Used Parts */}
+                {usedParts.length > 0 && (
+                  <>
+                    <Separator />
+                    <div>
+                      <h4 className="font-medium text-sm text-muted-foreground mb-2 flex items-center gap-2">
+                        <Package className="h-4 w-4" />
+                        Wymienione części
+                      </h4>
+                      <div className="space-y-2">
+                        {usedParts.map((part) => (
+                          <div key={part.id} className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
+                            <span>{part.spare_part_name}</span>
+                            <span className="font-medium">{Number(part.spare_part_price).toFixed(2)} PLN</span>
+                          </div>
+                        ))}
+                        <div className="flex items-center justify-between p-2 border-t pt-3 mt-2">
+                          <span className="font-medium">Suma części:</span>
+                          <span className="font-bold">
+                            {usedParts.reduce((sum, part) => sum + Number(part.spare_part_price), 0).toFixed(2)} PLN
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {/* Repair Cost */}
                 {complaint.repair_cost !== null && (
                   <>
                     <Separator />
                     <div>
-                      <h4 className="font-medium text-sm text-muted-foreground mb-1">Koszt naprawy</h4>
+                      <h4 className="font-medium text-sm text-muted-foreground mb-1">Całkowity koszt naprawy</h4>
                       <p className="text-lg font-semibold">{complaint.repair_cost.toFixed(2)} PLN</p>
                     </div>
                   </>

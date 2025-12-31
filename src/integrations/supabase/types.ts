@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      complaint_parts: {
+        Row: {
+          complaint_id: string
+          created_at: string
+          id: string
+          spare_part_id: string
+          spare_part_name: string
+          spare_part_price: number
+        }
+        Insert: {
+          complaint_id: string
+          created_at?: string
+          id?: string
+          spare_part_id: string
+          spare_part_name: string
+          spare_part_price?: number
+        }
+        Update: {
+          complaint_id?: string
+          created_at?: string
+          id?: string
+          spare_part_id?: string
+          spare_part_name?: string
+          spare_part_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaint_parts_complaint_id_fkey"
+            columns: ["complaint_id"]
+            isOneToOne: false
+            referencedRelation: "complaints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "complaint_parts_spare_part_id_fkey"
+            columns: ["spare_part_id"]
+            isOneToOne: false
+            referencedRelation: "spare_parts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       complaint_status_history: {
         Row: {
           changed_at: string
