@@ -51,6 +51,17 @@ export default function AcceptDevice() {
         return;
       }
 
+      // Check if device was already accepted (status is not 'submitted')
+      if (complaint.status !== "submitted") {
+        toast({
+          title: "Urządzenie już przyjęte",
+          description: `To urządzenie zostało już przyjęte do serwisu. Aktualny status: ${complaint.status}`,
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       
