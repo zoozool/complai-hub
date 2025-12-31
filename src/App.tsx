@@ -20,6 +20,7 @@ import ComplaintSettings from "./pages/admin/ComplaintSettings";
 import WarrantyRepairs from "./pages/admin/WarrantyRepairs";
 import AcceptDevice from "./pages/admin/AcceptDevice";
 import VerifyDevice from "./pages/admin/VerifyDevice";
+import ScheduledPickups from "./pages/admin/ScheduledPickups";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
               <Route path="/admin/settings" element={<ComplaintSettings />} />
               <Route path="/admin/accept-device" element={<AcceptDevice />} />
               <Route path="/admin/verify-device" element={<VerifyDevice />} />
+              <Route path="/admin/scheduled-pickups" element={<ScheduledPickups />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
