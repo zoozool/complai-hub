@@ -107,7 +107,12 @@ export type Database = {
           id: string
           incoming_tracking_number: string | null
           internal_complaint_number: string | null
+          invoice_address: string | null
+          invoice_city: string | null
+          invoice_company_name: string | null
           invoice_data: string | null
+          invoice_postal_code: string | null
+          invoice_vat_id: string | null
           outgoing_tracking_number: string | null
           package_adapter: boolean
           package_device: boolean
@@ -144,7 +149,12 @@ export type Database = {
           id?: string
           incoming_tracking_number?: string | null
           internal_complaint_number?: string | null
+          invoice_address?: string | null
+          invoice_city?: string | null
+          invoice_company_name?: string | null
           invoice_data?: string | null
+          invoice_postal_code?: string | null
+          invoice_vat_id?: string | null
           outgoing_tracking_number?: string | null
           package_adapter?: boolean
           package_device?: boolean
@@ -181,7 +191,12 @@ export type Database = {
           id?: string
           incoming_tracking_number?: string | null
           internal_complaint_number?: string | null
+          invoice_address?: string | null
+          invoice_city?: string | null
+          invoice_company_name?: string | null
           invoice_data?: string | null
+          invoice_postal_code?: string | null
+          invoice_vat_id?: string | null
           outgoing_tracking_number?: string | null
           package_adapter?: boolean
           package_device?: boolean

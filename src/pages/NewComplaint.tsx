@@ -50,6 +50,12 @@ const NewComplaint = () => {
     returnEmail: userProfile?.email || '',
     acceptedTerms: false,
     internalComplaintNumber: '',
+    // VAT Invoice fields
+    invoiceCompanyName: '',
+    invoiceVatId: '',
+    invoiceAddress: '',
+    invoicePostalCode: '',
+    invoiceCity: '',
   });
 
   useEffect(() => {
@@ -101,7 +107,7 @@ const NewComplaint = () => {
         packageData[fieldKey] = selectedPackages[item.id] || false;
       });
 
-      const complaintData = {
+      const complaintData: any = {
         user_id: userProfile?.user_id,
         device_type: formData.deviceType,
         device_serial_number: formData.deviceSerialNumber,
@@ -115,10 +121,21 @@ const NewComplaint = () => {
         return_phone: formData.returnPhone,
         return_email: formData.returnEmail,
         ...packageData,
-        ...(isBusinessPartner && formData.internalComplaintNumber && {
-          internal_complaint_number: formData.internalComplaintNumber,
-        }),
       };
+
+      // Add VAT invoice data only if not warranty repair
+      if (!formData.warrantyRepair) {
+        complaintData.invoice_company_name = formData.invoiceCompanyName;
+        complaintData.invoice_vat_id = formData.invoiceVatId;
+        complaintData.invoice_address = formData.invoiceAddress;
+        complaintData.invoice_postal_code = formData.invoicePostalCode;
+        complaintData.invoice_city = formData.invoiceCity;
+      }
+
+      // Add internal complaint number for business partners
+      if (isBusinessPartner && formData.internalComplaintNumber) {
+        complaintData.internal_complaint_number = formData.internalComplaintNumber;
+      }
 
       const { error } = await supabase
         .from('complaints')
@@ -370,6 +387,69 @@ const NewComplaint = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* VAT Invoice Data - only when not warranty repair */}
+          {!formData.warrantyRepair && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Dane do faktury VAT</CardTitle>
+                <CardDescription>Wypełnij dane do wystawienia faktury</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="md:col-span-2">
+                    <Label htmlFor="invoiceCompanyName">Nazwa firmy</Label>
+                    <Input
+                      id="invoiceCompanyName"
+                      value={formData.invoiceCompanyName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, invoiceCompanyName: e.target.value }))}
+                      placeholder="Nazwa firmy lub imię i nazwisko"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="invoiceVatId">NIP</Label>
+                    <Input
+                      id="invoiceVatId"
+                      value={formData.invoiceVatId}
+                      onChange={(e) => setFormData(prev => ({ ...prev, invoiceVatId: e.target.value }))}
+                      placeholder="Numer NIP"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="invoiceAddress">Adres</Label>
+                    <Input
+                      id="invoiceAddress"
+                      value={formData.invoiceAddress}
+                      onChange={(e) => setFormData(prev => ({ ...prev, invoiceAddress: e.target.value }))}
+                      placeholder="Ulica i numer"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="invoicePostalCode">Kod pocztowy</Label>
+                    <Input
+                      id="invoicePostalCode"
+                      value={formData.invoicePostalCode}
+                      onChange={(e) => setFormData(prev => ({ ...prev, invoicePostalCode: e.target.value }))}
+                      placeholder="00-000"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="invoiceCity">Miejscowość</Label>
+                    <Input
+                      id="invoiceCity"
+                      value={formData.invoiceCity}
+                      onChange={(e) => setFormData(prev => ({ ...prev, invoiceCity: e.target.value }))}
+                      placeholder="Miejscowość"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Package Contents */}
           <Card>
