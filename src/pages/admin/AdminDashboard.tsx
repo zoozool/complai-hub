@@ -30,9 +30,10 @@ export default function AdminDashboard() {
         .select(`*`)
         .order('submission_date', { ascending: false });
 
-      // Apply role-based filtering
+      // Apply role-based filtering - for technicians show received/in_progress devices
       if (isTechnician()) {
-        query = query.eq('assigned_technician_id', user?.id);
+        // Show devices that are received or in_progress (assigned to this technician or unassigned)
+        query = query.in('status', ['received', 'in_progress']);
       }
 
       // Apply search filters
@@ -86,11 +87,11 @@ export default function AdminDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {isTechnician() ? 'My Assigned Complaints' : 'Complaint Management'}
+              {isTechnician() ? 'Urządzenia do naprawy' : 'Complaint Management'}
             </h1>
             <p className="text-muted-foreground">
               {isTechnician() 
-                ? 'View and manage complaints assigned to you'
+                ? 'Urządzenia ze statusem "W serwisie" lub "W naprawie"'
                 : 'Manage all complaints in the system'
               }
             </p>
