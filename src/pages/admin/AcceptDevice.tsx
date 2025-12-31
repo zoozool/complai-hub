@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useRole } from "@/hooks/useRole";
-import { Package, Smartphone } from "lucide-react";
+import { Package, Smartphone, CheckCircle, AlertCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function AcceptDevice() {
   const { isAdmin, isEmployee, loading: roleLoading } = useRole();
@@ -14,6 +15,7 @@ export default function AcceptDevice() {
   const [packageNumber, setPackageNumber] = useState("");
   const [deviceNumber, setDeviceNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [foundComplaint, setFoundComplaint] = useState<any>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,16 +31,56 @@ export default function AcceptDevice() {
 
     setIsSubmitting(true);
     
-    // TODO: Implement device acceptance logic
-    // For now, just show a success message
-    toast({
-      title: "Urządzenie przyjęte",
-      description: `Paczka: ${packageNumber}, Urządzenie: ${deviceNumber}`,
-    });
-    
-    setPackageNumber("");
-    setDeviceNumber("");
-    setIsSubmitting(false);
+    try {
+      // Find complaint by device serial number
+      const { data: complaint, error: findError } = await supabase
+        .from("complaints")
+        .select("id, device_serial_number, device_type, status, internal_complaint_number")
+        .eq("device_serial_number", deviceNumber.trim())
+        .maybeSingle();
+
+      if (findError) throw findError;
+
+      if (!complaint) {
+        toast({
+          title: "Nie znaleziono",
+          description: `Nie znaleziono reklamacji dla urządzenia: ${deviceNumber}`,
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Update complaint status to 'received' and set package number
+      const { error: updateError } = await supabase
+        .from("complaints")
+        .update({
+          status: "received",
+          incoming_tracking_number: packageNumber.trim(),
+        })
+        .eq("id", complaint.id);
+
+      if (updateError) throw updateError;
+
+      setFoundComplaint(complaint);
+      
+      toast({
+        title: "Urządzenie przyjęte",
+        description: `Reklamacja ${complaint.internal_complaint_number || complaint.id} - status zmieniony na "Przyjęto do serwisu"`,
+      });
+      
+      setPackageNumber("");
+      setDeviceNumber("");
+    } catch (error: any) {
+      console.error("Error accepting device:", error);
+      toast({
+        title: "Błąd",
+        description: error.message || "Nie udało się przyjąć urządzenia",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (roleLoading) {

@@ -20,6 +20,7 @@ export function ComplaintDetailsDialog({
   const getStatusBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
       submitted: "secondary",
+      received: "default",
       in_progress: "default",
       completed: "outline",
       awaiting_shipment: "secondary",
@@ -154,7 +155,11 @@ export function ComplaintDetailsDialog({
             <CardHeader>
               <CardTitle>Shipping & Tracking</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Numer paczki</p>
+                <p>{complaint.incoming_tracking_number || "Nie podano"}</p>
+              </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Incoming Tracking</p>
                 <p>{complaint.incoming_tracking_number || "Not provided"}</p>
