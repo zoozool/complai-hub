@@ -504,6 +504,7 @@ export type Database = {
         | "received"
         | "in_progress"
         | "completed"
+        | "verified"
         | "awaiting_shipment"
         | "cancelled"
     }
@@ -639,6 +640,7 @@ export const Constants = {
         "received",
         "in_progress",
         "completed",
+        "verified",
         "awaiting_shipment",
         "cancelled",
       ],
