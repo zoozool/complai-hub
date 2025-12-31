@@ -7,10 +7,15 @@ A modern web application for managing service complaints, courier orders, and pi
 - **User Authentication**: Secure login/signup with email, password reset functionality, and "Remember me" option
 - **Complaint Management**: Submit, track, and manage service complaints
 - **Admin Dashboard**: Comprehensive admin panel for managing users, complaints, and settings
+- **Device Acceptance**: Accept and register incoming devices at service center
+- **Device Verification**: Verify repaired devices with checklist (power, GPS, GSM, sound)
+- **Warranty Repairs**: Dedicated workflow for service technicians to manage warranty repairs
+- **Parts Tracking**: Track spare parts used in each repair with cost calculation
 - **Courier Orders**: Order courier services for shipping devices
 - **Pickup Scheduling**: Schedule device pickups for repair
 - **Role-Based Access**: Different access levels for administrators, employees, and service technicians
 - **User Profiles**: Manage personal and company information
+- **Multi-language Support**: Configurable translations for UI elements
 
 ## 🛠️ Tech Stack
 
@@ -60,11 +65,15 @@ A modern web application for managing service complaints, courier orders, and pi
 |-------|-------------|
 | `profiles` | User profile information |
 | `complaints` | Service complaint records |
+| `complaint_parts` | Parts used in repairs |
+| `complaint_status_history` | Status change history |
 | `courier_orders` | Courier order requests |
 | `pickup_requests` | Scheduled pickup requests |
 | `user_roles` | User role assignments |
 | `service_options` | Available service options |
 | `package_contents` | Package content definitions |
+| `spare_parts` | Spare parts inventory |
+| `translations` | UI translations |
 
 ### User Roles
 
@@ -75,9 +84,11 @@ A modern web application for managing service complaints, courier orders, and pi
 ### Complaint Statuses
 
 - `submitted` - Initial submission
-- `in_progress` - Being processed
-- `awaiting_shipment` - Ready for shipping
+- `received` - Device received at service center
+- `in_progress` - Being repaired
 - `completed` - Repair completed
+- `verified` - Device verified after repair
+- `awaiting_shipment` - Ready for shipping
 - `cancelled` - Cancelled
 
 ## 📁 Project Structure
@@ -86,14 +97,25 @@ A modern web application for managing service complaints, courier orders, and pi
 src/
 ├── components/
 │   ├── admin/          # Admin-specific components
+│   │   ├── ComplaintTable.tsx      # Complaints list table
+│   │   ├── TechnicianRepairView.tsx # Repair workflow for technicians
+│   │   ├── SearchFilters.tsx       # Search and filter controls
+│   │   └── ...
 │   └── ui/             # Reusable UI components (shadcn)
 ├── hooks/              # Custom React hooks
 │   ├── useAuth.tsx     # Authentication hook
-│   └── useRole.tsx     # Role management hook
+│   ├── useRole.tsx     # Role management hook
+│   └── useTranslations.tsx # Multi-language support
 ├── integrations/
 │   └── supabase/       # Supabase client and types
 ├── pages/
 │   ├── admin/          # Admin pages
+│   │   ├── AdminDashboard.tsx  # Main admin dashboard
+│   │   ├── AcceptDevice.tsx    # Device acceptance
+│   │   ├── VerifyDevice.tsx    # Device verification
+│   │   ├── WarrantyRepairs.tsx # Warranty repairs management
+│   │   ├── UserManagement.tsx  # User management
+│   │   └── ComplaintSettings.tsx # Settings configuration
 │   ├── Auth.tsx        # Authentication page
 │   ├── Dashboard.tsx   # User dashboard
 │   ├── NewComplaint.tsx # Complaint submission
