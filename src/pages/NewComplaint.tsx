@@ -60,6 +60,19 @@ const NewComplaint = () => {
     invoiceCity: '',
   });
 
+  // Update form data when userProfile loads
+  useEffect(() => {
+    if (userProfile) {
+      setFormData(prev => ({
+        ...prev,
+        returnFirstName: prev.returnFirstName || userProfile.first_name || '',
+        returnLastName: prev.returnLastName || userProfile.last_name || '',
+        returnPhone: prev.returnPhone || userProfile.phone_number || '',
+        returnEmail: prev.returnEmail || userProfile.email || '',
+      }));
+    }
+  }, [userProfile]);
+
   useEffect(() => {
     const fetchOptions = async () => {
       try {
