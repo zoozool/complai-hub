@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useTranslations } from '@/hooks/useTranslations';
+
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -10,17 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Globe } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
-const LANGUAGES = [
-  { code: 'pl', name: 'Polski', flag: '🇵🇱' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-];
 
 export default function Profile() {
   const { user, userProfile, signOut } = useAuth();
-  const { language, setLanguage } = useTranslations();
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -186,37 +180,6 @@ export default function Profile() {
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4 max-w-4xl">
         <h1 className="text-3xl font-bold mb-8">Mój profil</h1>
-
-        {/* Language Selection Section */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="h-5 w-5" />
-              Język / Language
-            </CardTitle>
-            <CardDescription>Wybierz preferowany język</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="max-w-xs">
-              <Label htmlFor="language">Język aplikacji</Label>
-              <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger id="language" className="mt-2">
-                  <SelectValue placeholder="Wybierz język" />
-                </SelectTrigger>
-                <SelectContent>
-                  {LANGUAGES.map((lang) => (
-                    <SelectItem key={lang.code} value={lang.code}>
-                      <span className="flex items-center gap-2">
-                        <span>{lang.flag}</span>
-                        <span>{lang.name}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Change Password Section */}
         <Card className="mb-8">
