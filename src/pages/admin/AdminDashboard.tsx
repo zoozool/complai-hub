@@ -60,7 +60,37 @@ export default function AdminDashboard() {
       const { data, error } = await query;
 
       if (error) throw error;
-      setComplaints(data || []);
+
+      // Fetch technician profiles for assigned complaints
+      const technicianIds = [...new Set((data || [])
+        .map(c => c.assigned_technician_id)
+        .filter(Boolean))];
+
+      let technicianMap: Record<string, { first_name: string | null; last_name: string | null }> = {};
+      
+      if (technicianIds.length > 0) {
+        const { data: technicians } = await supabase
+          .from('profiles')
+          .select('user_id, first_name, last_name')
+          .in('user_id', technicianIds);
+
+        if (technicians) {
+          technicianMap = technicians.reduce((acc, t) => {
+            acc[t.user_id] = { first_name: t.first_name, last_name: t.last_name };
+            return acc;
+          }, {} as Record<string, { first_name: string | null; last_name: string | null }>);
+        }
+      }
+
+      // Map technician data to complaints
+      const complaintsWithTechnicians = (data || []).map(complaint => ({
+        ...complaint,
+        technician: complaint.assigned_technician_id 
+          ? technicianMap[complaint.assigned_technician_id] || null
+          : null
+      }));
+
+      setComplaints(complaintsWithTechnicians);
     } catch (error) {
       console.error('Error fetching complaints:', error);
       toast({
