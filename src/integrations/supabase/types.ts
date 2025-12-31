@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      complaint_status_history: {
+        Row: {
+          changed_at: string
+          changed_by: string
+          complaint_id: string
+          id: string
+          new_status: Database["public"]["Enums"]["complaint_status"]
+          notes: string | null
+          old_status: Database["public"]["Enums"]["complaint_status"] | null
+        }
+        Insert: {
+          changed_at?: string
+          changed_by: string
+          complaint_id: string
+          id?: string
+          new_status: Database["public"]["Enums"]["complaint_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["complaint_status"] | null
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string
+          complaint_id?: string
+          id?: string
+          new_status?: Database["public"]["Enums"]["complaint_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["complaint_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaint_status_history_complaint_id_fkey"
+            columns: ["complaint_id"]
+            isOneToOne: false
+            referencedRelation: "complaints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       complaints: {
         Row: {
           assigned_technician_id: string | null

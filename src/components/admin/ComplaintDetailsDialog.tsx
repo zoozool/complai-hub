@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { Loader2, History } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ComplaintDetailsDialogProps {
   complaint: any;
@@ -11,12 +13,76 @@ interface ComplaintDetailsDialogProps {
   isLoading?: boolean;
 }
 
+interface StatusHistoryEntry {
+  id: string;
+  old_status: string | null;
+  new_status: string;
+  changed_at: string;
+  changed_by: string;
+  changer_profile?: {
+    first_name: string | null;
+    last_name: string | null;
+    email: string;
+  };
+}
+
 export function ComplaintDetailsDialog({
   complaint,
   open,
   onOpenChange,
   isLoading = false,
 }: ComplaintDetailsDialogProps) {
+  const [statusHistory, setStatusHistory] = useState<StatusHistoryEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
+  useEffect(() => {
+    if (open && complaint?.id) {
+      fetchStatusHistory(complaint.id);
+    }
+  }, [open, complaint?.id]);
+
+  const fetchStatusHistory = async (complaintId: string) => {
+    setHistoryLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("complaint_status_history")
+        .select(`
+          id,
+          old_status,
+          new_status,
+          changed_at,
+          changed_by
+        `)
+        .eq("complaint_id", complaintId)
+        .order("changed_at", { ascending: false });
+
+      if (error) throw error;
+
+      // Fetch profiles for each changer
+      if (data && data.length > 0) {
+        const changerIds = [...new Set(data.map(h => h.changed_by))];
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, first_name, last_name, email")
+          .in("user_id", changerIds);
+
+        const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+        
+        const enrichedData = data.map(h => ({
+          ...h,
+          changer_profile: profileMap.get(h.changed_by) as StatusHistoryEntry["changer_profile"],
+        }));
+        
+        setStatusHistory(enrichedData);
+      } else {
+        setStatusHistory([]);
+      }
+    } catch (error) {
+      console.error("Error fetching status history:", error);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
   const getStatusBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
       submitted: "secondary",
@@ -201,6 +267,53 @@ export function ComplaintDetailsDialog({
                   </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Status History */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="h-5 w-5" />
+                Historia zmian statusu
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {historyLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                </div>
+              ) : statusHistory.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Brak historii zmian</p>
+              ) : (
+                <div className="space-y-3">
+                  {statusHistory.map((entry) => (
+                    <div key={entry.id} className="flex items-start justify-between border-b pb-3 last:border-0">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          {entry.old_status && (
+                            <>
+                              {getStatusBadge(entry.old_status)}
+                              <span className="text-muted-foreground">→</span>
+                            </>
+                          )}
+                          {getStatusBadge(entry.new_status)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {entry.changer_profile 
+                            ? `${entry.changer_profile.first_name || ''} ${entry.changer_profile.last_name || ''}`.trim() || entry.changer_profile.email
+                            : 'Nieznany użytkownik'}
+                        </p>
+                      </div>
+                      <div className="text-right text-sm text-muted-foreground">
+                        {format(new Date(entry.changed_at), "dd.MM.yyyy")}
+                        <br />
+                        {format(new Date(entry.changed_at), "HH:mm")}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
