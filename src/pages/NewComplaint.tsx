@@ -122,12 +122,11 @@ const NewComplaint = () => {
     setLoading(true);
 
     try {
-      // Build package content fields dynamically
-      const packageData: Record<string, boolean> = {};
-      packageContents.forEach((item) => {
-        const fieldKey = `package_${item.name.toLowerCase().replace(/\s+/g, '_')}`;
-        packageData[fieldKey] = selectedPackages[item.id] || false;
-      });
+      // Map package contents by name to fixed database columns
+      const getPackageValue = (name: string): boolean => {
+        const item = packageContents.find(p => p.name.toLowerCase() === name.toLowerCase());
+        return item ? (selectedPackages[item.id] || false) : false;
+      };
 
       const complaintData: any = {
         user_id: userProfile?.user_id,
@@ -142,7 +141,13 @@ const NewComplaint = () => {
         return_city: formData.returnCity,
         return_phone: formData.returnPhone,
         return_email: formData.returnEmail,
-        ...packageData,
+        // Map to fixed database columns
+        package_device: getPackageValue('Device'),
+        package_original_packaging: getPackageValue('Original Packaging'),
+        package_mount: getPackageValue('Mount'),
+        package_adapter: getPackageValue('Adapter'),
+        package_usb_cable: getPackageValue('USB Cable') || getPackageValue('Kabel USB'),
+        package_receipt_copy: getPackageValue('Purchase Receipt Copy'),
       };
 
       // Add VAT invoice data only if invoice document type is selected
