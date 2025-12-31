@@ -463,6 +463,7 @@ export type Database = {
       app_role: "main_administrator" | "employee" | "service_technician"
       complaint_status:
         | "submitted"
+        | "received"
         | "in_progress"
         | "completed"
         | "awaiting_shipment"
@@ -597,6 +598,7 @@ export const Constants = {
       app_role: ["main_administrator", "employee", "service_technician"],
       complaint_status: [
         "submitted",
+        "received",
         "in_progress",
         "completed",
         "awaiting_shipment",
