@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Settings, Users, ClipboardList, Wrench, LogOut, ShieldCheck, PackageCheck, ClipboardCheck } from "lucide-react";
+import { Settings, Users, ClipboardList, Wrench, LogOut, ShieldCheck, PackageCheck, ClipboardCheck, Truck } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -62,6 +62,11 @@ export function AdminSidebar() {
           title: "Weryfikacja urządzenia",
           url: "/admin/verify-device",
           icon: ClipboardCheck,
+        },
+        {
+          title: "Zaplanowane odbiory",
+          url: "/admin/scheduled-pickups",
+          icon: Truck,
         }
       );
     }
