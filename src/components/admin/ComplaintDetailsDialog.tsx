@@ -27,9 +27,18 @@ export function ComplaintDetailsDialog({
       cancelled: "destructive",
     };
     
+    const statusLabels: Record<string, string> = {
+      submitted: "Zgłoszono",
+      received: "W serwisie",
+      in_progress: "W naprawie",
+      completed: "Zakończono",
+      awaiting_shipment: "Oczekuje na wysyłkę",
+      cancelled: "Anulowano",
+    };
+    
     return (
       <Badge variant={variants[status] || "default"}>
-        {status?.replace('_', ' ').toUpperCase()}
+        {statusLabels[status] || status?.replace('_', ' ').toUpperCase()}
       </Badge>
     );
   };
