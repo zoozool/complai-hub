@@ -38,15 +38,25 @@ export function ComplaintTable({ complaints, onRefresh, userRole }: ComplaintTab
   const getStatusBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
       submitted: "secondary",
+      received: "default",
       in_progress: "default",
       completed: "outline",
       awaiting_shipment: "secondary",
       cancelled: "destructive",
     };
     
+    const statusLabels: Record<string, string> = {
+      submitted: "Zgłoszone",
+      received: "W serwisie",
+      in_progress: "W naprawie",
+      completed: "Zakończone",
+      awaiting_shipment: "Oczekuje na wysyłkę",
+      cancelled: "Anulowane",
+    };
+    
     return (
       <Badge variant={variants[status] || "default"}>
-        {status?.replace('_', ' ').toUpperCase()}
+        {statusLabels[status] || status?.replace('_', ' ').toUpperCase()}
       </Badge>
     );
   };
