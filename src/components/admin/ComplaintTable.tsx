@@ -106,8 +106,15 @@ export function ComplaintTable({ complaints, onRefresh, userRole }: ComplaintTab
 
   const getTechnicianName = (complaint: any) => {
     const technician = complaint.technician;
-    if (!technician) return "Unassigned";
-    return `${technician.first_name || ''} ${technician.last_name || ''}`.trim();
+    if (technician) {
+      const name = `${technician.first_name || ''} ${technician.last_name || ''}`.trim();
+      return name || 'Przypisany';
+    }
+    // Fallback: check if assigned_technician_id exists
+    if (complaint.assigned_technician_id) {
+      return 'Przypisany';
+    }
+    return "Nieprzypisany";
   };
 
   const canEdit = userRole === 'main_administrator' || userRole === 'service_technician';
