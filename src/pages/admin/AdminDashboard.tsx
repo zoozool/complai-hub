@@ -37,13 +37,7 @@ export default function AdminDashboard() {
 
       // Apply search filters
       if (searchTerm) {
-        query = query.or(`
-          device_serial_number.ilike.%${searchTerm}%,
-          internal_complaint_number.ilike.%${searchTerm}%,
-          return_first_name.ilike.%${searchTerm}%,
-          return_last_name.ilike.%${searchTerm}%,
-          return_email.ilike.%${searchTerm}%
-        `);
+        query = query.or(`device_serial_number.ilike.%${searchTerm}%,internal_complaint_number.ilike.%${searchTerm}%,return_first_name.ilike.%${searchTerm}%,return_last_name.ilike.%${searchTerm}%,return_email.ilike.%${searchTerm}%`);
       }
 
       if (statusFilter) {
