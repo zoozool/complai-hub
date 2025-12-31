@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
+import { pl } from 'date-fns/locale';
 import { 
   ArrowLeft, 
   FileText, 
@@ -59,16 +60,16 @@ const ComplaintDetails = () => {
     if (!complaint) return null;
     
     if (complaint.completion_date) {
-      return <Badge className="bg-success text-success-foreground">Completed</Badge>;
+      return <Badge className="bg-success text-success-foreground">Zakończona</Badge>;
     } else if (complaint.incoming_tracking_number || complaint.outgoing_tracking_number) {
-      return <Badge className="bg-info text-info-foreground">In Progress</Badge>;
+      return <Badge className="bg-info text-info-foreground">W trakcie</Badge>;
     } else {
-      return <Badge className="bg-warning text-warning-foreground">Submitted</Badge>;
+      return <Badge className="bg-warning text-warning-foreground">Zgłoszona</Badge>;
     }
   };
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'MMMM dd, yyyy HH:mm');
+    return format(new Date(dateString), 'dd MMMM yyyy, HH:mm', { locale: pl });
   };
 
   const formatCurrency = (amount: number) => {
@@ -92,7 +93,7 @@ const ComplaintDetails = () => {
     return (
       <DashboardLayout>
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-muted-foreground">Complaint not found</h2>
+          <h2 className="text-2xl font-bold text-muted-foreground">Nie znaleziono reklamacji</h2>
         </div>
       </DashboardLayout>
     );
@@ -110,7 +111,7 @@ const ComplaintDetails = () => {
               className="flex items-center"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
+              Powrót do pulpitu
             </Button>
           </div>
           <div className="flex items-center space-x-2">
@@ -125,17 +126,17 @@ const ComplaintDetails = () => {
               <div>
                 <CardTitle className="text-2xl flex items-center">
                   <FileText className="mr-3 h-6 w-6 text-primary" />
-                  Complaint Details
+                  Szczegóły reklamacji
                 </CardTitle>
                 <p className="text-muted-foreground mt-1">
-                  Device Serial: <span className="font-mono font-medium">{complaint.device_serial_number}</span>
+                  Numer seryjny urządzenia: <span className="font-mono font-medium">{complaint.device_serial_number}</span>
                 </p>
               </div>
               {isBusinessPartner && complaint.internal_complaint_number && (
                 <div className="text-right">
                   <div className="flex items-center text-sm text-muted-foreground mb-1">
                     <Hash className="h-3 w-3 mr-1" />
-                    Internal Number
+                    Numer wewnętrzny
                   </div>
                   <p className="font-mono font-medium">{complaint.internal_complaint_number}</p>
                 </div>
@@ -147,15 +148,15 @@ const ComplaintDetails = () => {
             <div>
               <h4 className="font-medium text-foreground mb-3 flex items-center">
                 <Wrench className="mr-2 h-4 w-4" />
-                Device Information
+                Informacje o urządzeniu
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-muted/30 p-4 rounded-lg">
                 <div>
-                  <span className="text-sm text-muted-foreground">Device Type</span>
+                  <span className="text-sm text-muted-foreground">Typ urządzenia</span>
                   <p className="font-medium">{complaint.device_type}</p>
                 </div>
                 <div>
-                  <span className="text-sm text-muted-foreground">Serial Number</span>
+                  <span className="text-sm text-muted-foreground">Numer seryjny</span>
                   <p className="font-mono">{complaint.device_serial_number}</p>
                 </div>
               </div>
@@ -163,7 +164,7 @@ const ComplaintDetails = () => {
 
             {/* Damage Description */}
             <div>
-              <h4 className="font-medium text-foreground mb-2">Damage Description</h4>
+              <h4 className="font-medium text-foreground mb-2">Opis uszkodzenia</h4>
               <div className="bg-muted/30 p-4 rounded-lg">
                 <p className="text-foreground">{complaint.damage_description}</p>
               </div>
@@ -173,25 +174,25 @@ const ComplaintDetails = () => {
             <div>
               <h4 className="font-medium text-foreground mb-3 flex items-center">
                 <Shield className="mr-2 h-4 w-4" />
-                Service Options
+                Opcje serwisowe
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="flex items-center space-x-2">
                   <CheckCircle className={`h-4 w-4 ${complaint.warranty_repair ? 'text-success' : 'text-muted-foreground'}`} />
                   <span className={complaint.warranty_repair ? 'text-foreground' : 'text-muted-foreground'}>
-                    Warranty Repair
+                    Naprawa gwarancyjna
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className={`h-4 w-4 ${complaint.express_repair ? 'text-success' : 'text-muted-foreground'}`} />
                   <span className={complaint.express_repair ? 'text-foreground' : 'text-muted-foreground'}>
-                    Express Repair (+99 zł)
+                    Naprawa ekspresowa (+99 zł)
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className={`h-4 w-4 ${complaint.screen_protection_foil ? 'text-success' : 'text-muted-foreground'}`} />
                   <span className={complaint.screen_protection_foil ? 'text-foreground' : 'text-muted-foreground'}>
-                    Screen Protection (+49 zł)
+                    Folia ochronna (+49 zł)
                   </span>
                 </div>
               </div>
@@ -203,13 +204,13 @@ const ComplaintDetails = () => {
             <div>
               <h4 className="font-medium text-foreground mb-3 flex items-center">
                 <Calendar className="mr-2 h-4 w-4" />
-                Timeline
+                Historia
               </h4>
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
                   <div>
-                    <p className="font-medium">Complaint Submitted</p>
+                    <p className="font-medium">Reklamacja zgłoszona</p>
                     <p className="text-sm text-muted-foreground">{formatDate(complaint.submission_date)}</p>
                   </div>
                 </div>
@@ -218,9 +219,9 @@ const ComplaintDetails = () => {
                   <div className="flex items-center space-x-3">
                     <div className="w-3 h-3 bg-info rounded-full"></div>
                     <div>
-                      <p className="font-medium">Device Received</p>
+                      <p className="font-medium">Urządzenie odebrane</p>
                       <p className="text-sm text-muted-foreground">
-                        Tracking: <span className="font-mono">{complaint.incoming_tracking_number}</span>
+                        Nr przesyłki: <span className="font-mono">{complaint.incoming_tracking_number}</span>
                       </p>
                     </div>
                   </div>
@@ -230,9 +231,9 @@ const ComplaintDetails = () => {
                   <div className="flex items-center space-x-3">
                     <div className="w-3 h-3 bg-warning rounded-full"></div>
                     <div>
-                      <p className="font-medium">Device Shipped</p>
+                      <p className="font-medium">Urządzenie wysłane</p>
                       <p className="text-sm text-muted-foreground">
-                        Tracking: <span className="font-mono">{complaint.outgoing_tracking_number}</span>
+                        Nr przesyłki: <span className="font-mono">{complaint.outgoing_tracking_number}</span>
                       </p>
                     </div>
                   </div>
@@ -242,7 +243,7 @@ const ComplaintDetails = () => {
                   <div className="flex items-center space-x-3">
                     <div className="w-3 h-3 bg-success rounded-full"></div>
                     <div>
-                      <p className="font-medium">Complaint Completed</p>
+                      <p className="font-medium">Reklamacja zakończona</p>
                       <p className="text-sm text-muted-foreground">{formatDate(complaint.completion_date)}</p>
                     </div>
                   </div>
@@ -259,7 +260,7 @@ const ComplaintDetails = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <MapPin className="mr-2 h-5 w-5" />
-                Return Address
+                Adres zwrotny
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -286,18 +287,18 @@ const ComplaintDetails = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Package className="mr-2 h-5 w-5" />
-                Package Contents
+                Zawartość przesyłki
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Device', included: complaint.package_device },
-                  { label: 'Original Packaging', included: complaint.package_original_packaging },
-                  { label: 'Mount', included: complaint.package_mount },
-                  { label: 'Adapter', included: complaint.package_adapter },
-                  { label: 'USB Cable', included: complaint.package_usb_cable },
-                  { label: 'Receipt Copy', included: complaint.package_receipt_copy },
+                  { label: 'Urządzenie', included: complaint.package_device },
+                  { label: 'Oryginalne opakowanie', included: complaint.package_original_packaging },
+                  { label: 'Uchwyt', included: complaint.package_mount },
+                  { label: 'Ładowarka', included: complaint.package_adapter },
+                  { label: 'Kabel USB', included: complaint.package_usb_cable },
+                  { label: 'Kopia paragonu', included: complaint.package_receipt_copy },
                 ].map((item, index) => (
                   <div key={index} className="flex items-center space-x-2">
                     <CheckCircle className={`h-4 w-4 ${item.included ? 'text-success' : 'text-muted-foreground'}`} />
@@ -315,33 +316,33 @@ const ComplaintDetails = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Truck className="mr-2 h-5 w-5" />
-                Tracking Information
+                Informacje o przesyłce
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm text-muted-foreground">Incoming Shipment</span>
+                  <span className="text-sm text-muted-foreground">Przesyłka przychodząca</span>
                 </div>
                 {complaint.incoming_tracking_number ? (
                   <Badge variant="outline" className="font-mono">
                     {complaint.incoming_tracking_number}
                   </Badge>
                 ) : (
-                  <span className="text-muted-foreground text-sm">Not assigned</span>
+                  <span className="text-muted-foreground text-sm">Nie przypisano</span>
                 )}
               </div>
               
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm text-muted-foreground">Outgoing Shipment</span>
+                  <span className="text-sm text-muted-foreground">Przesyłka wychodząca</span>
                 </div>
                 {complaint.outgoing_tracking_number ? (
                   <Badge variant="outline" className="font-mono">
                     {complaint.outgoing_tracking_number}
                   </Badge>
                 ) : (
-                  <span className="text-muted-foreground text-sm">Not assigned</span>
+                  <span className="text-muted-foreground text-sm">Nie przypisano</span>
                 )}
               </div>
             </CardContent>
@@ -352,34 +353,34 @@ const ComplaintDetails = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <DollarSign className="mr-2 h-5 w-5" />
-                Repair Information
+                Informacje o naprawie
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {complaint.diagnosis && (
                 <div>
-                  <span className="text-sm text-muted-foreground">Diagnosis</span>
+                  <span className="text-sm text-muted-foreground">Diagnoza</span>
                   <p className="text-foreground">{complaint.diagnosis}</p>
                 </div>
               )}
               
               {complaint.repair_cost && (
                 <div>
-                  <span className="text-sm text-muted-foreground">Repair Cost</span>
+                  <span className="text-sm text-muted-foreground">Koszt naprawy</span>
                   <p className="font-medium text-lg">{formatCurrency(complaint.repair_cost)}</p>
                 </div>
               )}
 
               {complaint.invoice_data && (
                 <div>
-                  <span className="text-sm text-muted-foreground">Invoice Information</span>
+                  <span className="text-sm text-muted-foreground">Dane do faktury</span>
                   <p className="text-foreground">{complaint.invoice_data}</p>
                 </div>
               )}
 
               {!complaint.diagnosis && !complaint.repair_cost && !complaint.invoice_data && (
                 <div className="text-center py-4">
-                  <p className="text-muted-foreground">Repair information will be available once the device is processed.</p>
+                  <p className="text-muted-foreground">Informacje o naprawie będą dostępne po przetworzeniu urządzenia.</p>
                 </div>
               )}
             </CardContent>

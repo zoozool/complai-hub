@@ -103,8 +103,8 @@ const NewComplaint = () => {
     
     if (!formData.acceptedTerms) {
       toast({
-        title: "Terms Required",
-        description: "Please accept the RMA procedure terms to continue",
+        title: "Wymagana akceptacja regulaminu",
+        description: "Proszę zaakceptować regulamin procedury RMA, aby kontynuować",
         variant: "destructive",
       });
       return;
@@ -112,8 +112,8 @@ const NewComplaint = () => {
 
     if (!formData.deviceType || !formData.deviceSerialNumber || !formData.damageDescription) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
+        title: "Brakujące informacje",
+        description: "Proszę wypełnić wszystkie wymagane pola",
         variant: "destructive",
       });
       return;
@@ -174,8 +174,8 @@ const NewComplaint = () => {
     } catch (error: any) {
       console.error('Error submitting complaint:', error);
       toast({
-        title: "Submission Failed",
-        description: error.message || "Failed to submit complaint",
+        title: "Błąd wysyłania",
+        description: error.message || "Nie udało się wysłać reklamacji",
         variant: "destructive",
       });
     } finally {
@@ -192,23 +192,23 @@ const NewComplaint = () => {
               <div className="flex justify-center mb-4">
                 <CheckCircle className="h-16 w-16 text-success" />
               </div>
-              <CardTitle className="text-2xl text-success">Complaint Submitted Successfully!</CardTitle>
+              <CardTitle className="text-2xl text-success">Reklamacja została wysłana!</CardTitle>
               <CardDescription className="text-lg">
-                Your complaint has been submitted. Please wait for contact from the technical department.
+                Twoja reklamacja została przyjęta. Proszę oczekiwać na kontakt z działu technicznego.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-accent/50 p-4 rounded-lg">
                 <p className="text-sm text-muted-foreground">
-                  You will receive an email confirmation shortly with your complaint details and next steps.
+                  Wkrótce otrzymasz e-mail z potwierdzeniem zawierający szczegóły reklamacji i kolejne kroki.
                 </p>
               </div>
               <div className="flex space-x-4 justify-center">
                 <Button onClick={() => navigate('/dashboard')}>
-                  View My Complaints
+                  Zobacz moje reklamacje
                 </Button>
                 <Button variant="outline" onClick={() => navigate('/new-complaint')}>
-                  Submit Another
+                  Złóż kolejną
                 </Button>
               </div>
             </CardContent>
@@ -222,9 +222,9 @@ const NewComplaint = () => {
     <DashboardLayout>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Submit New Complaint</h2>
+          <h2 className="text-3xl font-bold text-foreground mb-2">Złóż nową reklamację</h2>
           <p className="text-muted-foreground">
-            Fill out the form below to submit a device repair complaint. All required fields are marked with an asterisk (*).
+            Wypełnij poniższy formularz, aby zgłosić reklamację urządzenia. Wszystkie wymagane pola są oznaczone gwiazdką (*).
           </p>
         </div>
 
@@ -234,19 +234,19 @@ const NewComplaint = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <FileText className="mr-2 h-5 w-5" />
-                Device Information
+                Informacje o urządzeniu
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="deviceType">Device Type *</Label>
+                  <Label htmlFor="deviceType">Typ urządzenia *</Label>
                   <Select
                     value={formData.deviceType}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, deviceType: value }))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select device type" />
+                      <SelectValue placeholder="Wybierz typ urządzenia" />
                     </SelectTrigger>
                     <SelectContent>
                       {deviceTypes.map((type) => (
@@ -259,24 +259,24 @@ const NewComplaint = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="deviceSerialNumber">Device Serial Number *</Label>
+                  <Label htmlFor="deviceSerialNumber">Numer seryjny urządzenia *</Label>
                   <Input
                     id="deviceSerialNumber"
                     value={formData.deviceSerialNumber}
                     onChange={(e) => setFormData(prev => ({ ...prev, deviceSerialNumber: e.target.value }))}
-                    placeholder="Enter serial number"
+                    placeholder="Wprowadź numer seryjny"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="damageDescription">Damage Description *</Label>
+                <Label htmlFor="damageDescription">Opis uszkodzenia *</Label>
                 <Textarea
                   id="damageDescription"
                   value={formData.damageDescription}
                   onChange={(e) => setFormData(prev => ({ ...prev, damageDescription: e.target.value }))}
-                  placeholder="Describe the issue in detail..."
+                  placeholder="Opisz szczegółowo problem..."
                   rows={4}
                   required
                 />
@@ -284,7 +284,7 @@ const NewComplaint = () => {
 
               {/* Service Options */}
               <div className="space-y-4">
-                <h4 className="font-medium">Service Options</h4>
+                <h4 className="font-medium">Opcje serwisowe</h4>
                 
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2">
@@ -295,7 +295,7 @@ const NewComplaint = () => {
                         setFormData(prev => ({ ...prev, warrantyRepair: !!checked }))
                       }
                     />
-                    <Label htmlFor="warrantyRepair">Warranty Repair</Label>
+                    <Label htmlFor="warrantyRepair">Naprawa gwarancyjna</Label>
                   </div>
 
                   {serviceOptions.map((option) => (
@@ -317,12 +317,12 @@ const NewComplaint = () => {
 
               {isBusinessPartner && (
                 <div>
-                  <Label htmlFor="internalComplaintNumber">Internal Complaint Number</Label>
+                  <Label htmlFor="internalComplaintNumber">Wewnętrzny numer reklamacji</Label>
                   <Input
                     id="internalComplaintNumber"
                     value={formData.internalComplaintNumber}
                     onChange={(e) => setFormData(prev => ({ ...prev, internalComplaintNumber: e.target.value }))}
-                    placeholder="Internal reference number"
+                    placeholder="Numer wewnętrzny"
                   />
                 </div>
               )}
@@ -332,13 +332,13 @@ const NewComplaint = () => {
           {/* Return Address */}
           <Card>
             <CardHeader>
-              <CardTitle>Return Address</CardTitle>
-              <CardDescription>Where should we send the repaired device?</CardDescription>
+              <CardTitle>Adres zwrotny</CardTitle>
+              <CardDescription>Na jaki adres mamy wysłać naprawione urządzenie?</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="returnFirstName">First Name *</Label>
+                  <Label htmlFor="returnFirstName">Imię *</Label>
                   <Input
                     id="returnFirstName"
                     value={formData.returnFirstName}
@@ -348,7 +348,7 @@ const NewComplaint = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="returnLastName">Last Name *</Label>
+                  <Label htmlFor="returnLastName">Nazwisko *</Label>
                   <Input
                     id="returnLastName"
                     value={formData.returnLastName}
@@ -359,7 +359,7 @@ const NewComplaint = () => {
               </div>
 
               <div>
-                <Label htmlFor="returnStreet">Street Address *</Label>
+                <Label htmlFor="returnStreet">Ulica i numer *</Label>
                 <Input
                   id="returnStreet"
                   value={formData.returnStreet}
@@ -370,7 +370,7 @@ const NewComplaint = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="returnPostalCode">Postal Code *</Label>
+                  <Label htmlFor="returnPostalCode">Kod pocztowy *</Label>
                   <Input
                     id="returnPostalCode"
                     value={formData.returnPostalCode}
@@ -380,7 +380,7 @@ const NewComplaint = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="returnCity">City *</Label>
+                  <Label htmlFor="returnCity">Miejscowość *</Label>
                   <Input
                     id="returnCity"
                     value={formData.returnCity}
@@ -392,7 +392,7 @@ const NewComplaint = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="returnPhone">Phone Number *</Label>
+                  <Label htmlFor="returnPhone">Numer telefonu *</Label>
                   <Input
                     id="returnPhone"
                     value={formData.returnPhone}
@@ -402,7 +402,7 @@ const NewComplaint = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="returnEmail">Email *</Label>
+                  <Label htmlFor="returnEmail">E-mail *</Label>
                   <Input
                     id="returnEmail"
                     type="email"
@@ -507,8 +507,8 @@ const NewComplaint = () => {
           {/* Package Contents */}
           <Card>
             <CardHeader>
-              <CardTitle>Package Contents</CardTitle>
-              <CardDescription>Select all items included in the package</CardDescription>
+              <CardTitle>Zawartość przesyłki</CardTitle>
+              <CardDescription>Zaznacz wszystkie elementy zawarte w przesyłce</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -541,7 +541,7 @@ const NewComplaint = () => {
                     }
                   />
                   <Label htmlFor="acceptedTerms" className="text-sm">
-                    I have read and accept the RMA procedure *
+                    Zapoznałem się i akceptuję regulamin procedury RMA *
                   </Label>
                 </div>
 
@@ -551,14 +551,14 @@ const NewComplaint = () => {
                     variant="outline"
                     onClick={() => navigate('/dashboard')}
                   >
-                    Cancel
+                    Anuluj
                   </Button>
                   <Button
                     type="submit"
                     disabled={loading || !formData.acceptedTerms}
                   >
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Submit Complaint
+                    Wyślij reklamację
                   </Button>
                 </div>
               </div>
