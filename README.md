@@ -1,156 +1,168 @@
-# Service Complaint Management System
+# System Zarządzania Reklamacjami Serwisowymi
 
-A modern web application for managing service complaints, courier orders, and pickup requests. Built with React, TypeScript, and Supabase.
+Nowoczesna aplikacja webowa do zarządzania reklamacjami serwisowymi, zamówieniami kurierskimi i odbiorem urządzeń. Zbudowana z użyciem React, TypeScript i Supabase.
 
-## 🚀 Features
+## 🚀 Funkcjonalności
 
-- **User Authentication**: Secure login/signup with email, password reset functionality, and "Remember me" option
-- **Complaint Management**: Submit, track, and manage service complaints
-- **Admin Dashboard**: Comprehensive admin panel for managing users, complaints, and settings
-- **Device Acceptance**: Accept and register incoming devices at service center
-- **Device Verification**: Verify repaired devices with checklist (power, GPS, GSM, sound)
-- **Warranty Repairs**: Dedicated workflow for service technicians to manage warranty repairs
-- **Parts Tracking**: Track spare parts used in each repair with cost calculation
-- **Courier Orders**: Order courier services for shipping devices
-- **Pickup Scheduling**: Schedule device pickups for repair
-- **Role-Based Access**: Different access levels for administrators, employees, and service technicians
-- **User Profiles**: Manage personal and company information
-- **Multi-language Support**: Configurable translations for UI elements
+- **Autentykacja użytkowników**: Bezpieczne logowanie/rejestracja z e-mailem, resetowanie hasła i opcja "Zapamiętaj mnie"
+- **Zarządzanie reklamacjami**: Zgłaszanie, śledzenie i zarządzanie reklamacjami serwisowymi
+- **Panel administratora**: Kompleksowy panel do zarządzania użytkownikami, reklamacjami i ustawieniami
+- **Przyjęcie urządzenia**: Przyjmowanie i rejestracja urządzeń w serwisie z weryfikacją zawartości paczki
+- **Weryfikacja urządzenia**: Weryfikacja naprawionych urządzeń (zasilanie, GPS, GSM, dźwięk)
+- **Naprawy gwarancyjne**: Dedykowany przepływ pracy dla serwisantów do obsługi napraw gwarancyjnych
+- **Śledzenie części**: Śledzenie części zamiennych użytych w każdej naprawie z kalkulacją kosztów
+- **Zamówienia kurierskie**: Zamawianie usług kurierskich do wysyłki urządzeń
+- **Planowanie odbiorów**: Planowanie odbiorów urządzeń do naprawy
+- **Kontrola dostępu**: Różne poziomy dostępu dla administratorów, pracowników i serwisantów
+- **Profile użytkowników**: Zarządzanie danymi osobowymi i firmowymi
+- **Wielojęzyczność**: Konfigurowalne tłumaczenia elementów interfejsu
 
-## 🛠️ Tech Stack
+## 🛠️ Stack technologiczny
 
 - **Frontend**: React 18, TypeScript, Vite
-- **Styling**: Tailwind CSS, shadcn/ui components
-- **Backend**: Supabase (PostgreSQL, Authentication, Edge Functions)
-- **State Management**: TanStack React Query
+- **Stylowanie**: Tailwind CSS, komponenty shadcn/ui
+- **Backend**: Supabase (PostgreSQL, Autentykacja, Edge Functions)
+- **Zarządzanie stanem**: TanStack React Query
 - **Routing**: React Router DOM
-- **Forms**: React Hook Form with Zod validation
+- **Formularze**: React Hook Form z walidacją Zod
 
-## 📋 Prerequisites
+## 📋 Wymagania
 
-- Node.js (v18 or higher)
-- npm or bun package manager
-- Supabase account (for backend services)
+- Node.js (v18 lub wyższy)
+- npm lub bun
+- Konto Supabase (dla usług backendowych)
 
-## 🔧 Installation
+## 🔧 Instalacja
 
-1. **Clone the repository**
+1. **Sklonuj repozytorium**
    ```bash
    git clone <YOUR_GIT_URL>
    cd <YOUR_PROJECT_NAME>
    ```
 
-2. **Install dependencies**
+2. **Zainstaluj zależności**
    ```bash
    npm install
-   # or
+   # lub
    bun install
    ```
 
-3. **Start the development server**
+3. **Uruchom serwer deweloperski**
    ```bash
    npm run dev
-   # or
+   # lub
    bun run dev
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
+4. **Otwórz przeglądarkę**
+   Przejdź do `http://localhost:5173`
 
-## 🗄️ Database Schema
+## 🗄️ Schemat bazy danych
 
-### Tables
+### Tabele
 
-| Table | Description |
-|-------|-------------|
-| `profiles` | User profile information |
-| `complaints` | Service complaint records |
-| `complaint_parts` | Parts used in repairs |
-| `complaint_status_history` | Status change history |
-| `courier_orders` | Courier order requests |
-| `pickup_requests` | Scheduled pickup requests |
-| `user_roles` | User role assignments |
-| `service_options` | Available service options |
-| `package_contents` | Package content definitions |
-| `spare_parts` | Spare parts inventory |
-| `translations` | UI translations |
+| Tabela | Opis |
+|--------|------|
+| `profiles` | Informacje o profilu użytkownika |
+| `complaints` | Rekordty reklamacji serwisowych |
+| `complaint_parts` | Części użyte w naprawach |
+| `complaint_status_history` | Historia zmian statusów |
+| `courier_orders` | Zamówienia kurierskie |
+| `pickup_requests` | Zaplanowane odbiory urządzeń |
+| `user_roles` | Przypisania ról użytkowników |
+| `service_options` | Dostępne opcje serwisowe |
+| `package_contents` | Definicje zawartości paczek |
+| `spare_parts` | Magazyn części zamiennych |
+| `translations` | Tłumaczenia interfejsu |
 
-### User Roles
+### Role użytkowników
 
-- **main_administrator**: Full system access
-- **employee**: Standard employee access
-- **service_technician**: Technician-specific access
+| Rola | Opis |
+|------|------|
+| `main_administrator` | Pełny dostęp do systemu |
+| `employee` | Standardowy dostęp pracownika (przyjęcie, weryfikacja, odbiory) |
+| `service_technician` | Dostęp serwisanta (naprawy gwarancyjne, diagnoza) |
 
-### Complaint Statuses
+### Statusy reklamacji
 
-- `submitted` - Initial submission
-- `received` - Device received at service center
-- `in_progress` - Being repaired
-- `completed` - Repair completed
-- `verified` - Device verified after repair
-- `awaiting_shipment` - Ready for shipping
-- `cancelled` - Cancelled
+| Status | Opis |
+|--------|------|
+| `submitted` | Zgłoszono - wstępne zgłoszenie |
+| `received` | W serwisie - urządzenie przyjęte |
+| `in_progress` | W naprawie - trwa naprawa |
+| `completed` | Zakończono - naprawa ukończona |
+| `verified` | Zweryfikowano - urządzenie sprawdzone po naprawie |
+| `awaiting_shipment` | Oczekuje na wysyłkę |
+| `cancelled` | Anulowano |
 
-## 📁 Project Structure
+## 📁 Struktura projektu
 
 ```
 src/
 ├── components/
-│   ├── admin/          # Admin-specific components
-│   │   ├── ComplaintTable.tsx      # Complaints list table
-│   │   ├── TechnicianRepairView.tsx # Repair workflow for technicians
-│   │   ├── SearchFilters.tsx       # Search and filter controls
+│   ├── admin/          # Komponenty administracyjne
+│   │   ├── ComplaintTable.tsx      # Tabela reklamacji
+│   │   ├── TechnicianRepairView.tsx # Widok naprawy dla serwisanta
+│   │   ├── SearchFilters.tsx       # Filtry wyszukiwania
 │   │   └── ...
-│   └── ui/             # Reusable UI components (shadcn)
-├── hooks/              # Custom React hooks
-│   ├── useAuth.tsx     # Authentication hook
-│   ├── useRole.tsx     # Role management hook
-│   └── useTranslations.tsx # Multi-language support
+│   └── ui/             # Komponenty UI (shadcn)
+├── hooks/              # Własne hooki React
+│   ├── useAuth.tsx     # Hook autentykacji
+│   ├── useRole.tsx     # Hook zarządzania rolami
+│   ├── useComplaintDetails.ts # Hook szczegółów reklamacji
+│   └── useTranslations.tsx # Wielojęzyczność
 ├── integrations/
-│   └── supabase/       # Supabase client and types
+│   └── supabase/       # Klient i typy Supabase
 ├── pages/
-│   ├── admin/          # Admin pages
-│   │   ├── AdminDashboard.tsx  # Main admin dashboard
-│   │   ├── AcceptDevice.tsx    # Device acceptance
-│   │   ├── VerifyDevice.tsx    # Device verification
-│   │   ├── WarrantyRepairs.tsx # Warranty repairs management
-│   │   ├── UserManagement.tsx  # User management
-│   │   └── ComplaintSettings.tsx # Settings configuration
-│   ├── Auth.tsx        # Authentication page
-│   ├── Dashboard.tsx   # User dashboard
-│   ├── NewComplaint.tsx # Complaint submission
-│   ├── Profile.tsx     # User profile
+│   ├── admin/          # Strony administracyjne
+│   │   ├── AdminDashboard.tsx  # Główny panel administratora
+│   │   ├── AcceptDevice.tsx    # Przyjęcie urządzenia
+│   │   ├── VerifyDevice.tsx    # Weryfikacja urządzenia
+│   │   ├── WarrantyRepairs.tsx # Zarządzanie naprawami gwarancyjnymi
+│   │   ├── ScheduledPickups.tsx # Zaplanowane odbiory
+│   │   ├── UserManagement.tsx  # Zarządzanie użytkownikami
+│   │   └── ComplaintSettings.tsx # Konfiguracja ustawień
+│   ├── Auth.tsx        # Strona autentykacji
+│   ├── Dashboard.tsx   # Panel użytkownika
+│   ├── NewComplaint.tsx # Zgłaszanie reklamacji
+│   ├── Profile.tsx     # Profil użytkownika
 │   └── ...
-└── lib/                # Utility functions
+└── lib/                # Funkcje pomocnicze
 
 supabase/
 └── functions/
-    └── get-complaint/  # Edge function for fetching complaint details
+    ├── get-complaint/           # Pobieranie szczegółów reklamacji
+    └── get-complaints-by-serial/ # Wyszukiwanie reklamacji po numerze seryjnym
 ```
 
-## 🔌 API Endpoints
+## 🔌 API - Edge Functions
 
-### Edge Functions
+### Podsumowanie endpointów
 
-| Endpoint | Method | Auth Required | Description |
-|----------|--------|---------------|-------------|
-| `/functions/v1/get-complaint` | POST | Yes (JWT) | Fetch complaint details by ID |
+| Endpoint | Metoda | Opis |
+|----------|--------|------|
+| `/functions/v1/get-complaint` | POST | Pobierz szczegóły reklamacji po ID |
+| `/functions/v1/get-complaints-by-serial` | GET/POST | Wyszukaj reklamacje po numerze seryjnym urządzenia |
 
-### Get Complaint
+---
 
-Retrieves detailed information about a specific complaint. **Restricted to Main Administrators only.**
+### GET Complaint - Pobierz szczegóły reklamacji
 
-**Request:**
-```json
-{
-  "complaintId": "uuid-of-complaint"
-}
-```
+Pobiera szczegółowe informacje o konkretnej reklamacji. **Dostęp: Administrator, Pracownik.**
 
-**Headers:**
+**Endpoint:** `POST /functions/v1/get-complaint`
+
+**Nagłówki:**
 ```
 Authorization: Bearer <jwt-token>
 Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "complaintId": "uuid-reklamacji"
+}
 ```
 
 **Response (200):**
@@ -161,79 +173,177 @@ Content-Type: application/json
   "device_type": "string",
   "device_serial_number": "string",
   "damage_description": "string",
-  "status": "submitted | in_progress | completed | awaiting_shipment | cancelled",
+  "status": "submitted | received | in_progress | completed | verified | awaiting_shipment | cancelled",
   "assigned_technician_id": "uuid | null",
   "diagnosis": "string | null",
   "repair_cost": "number | null",
   "service_notes": "string | null",
+  "warranty_repair": "boolean",
+  "submission_date": "timestamp",
+  "completion_date": "timestamp | null",
   ...
 }
 ```
 
-**Error Responses:**
-- `401 Unauthorized` - Missing or invalid JWT token
-- `403 Forbidden` - User is not a Main Administrator
-- `404 Not Found` - Complaint not found
-- `400 Bad Request` - Missing complaint ID
-
-## 🔐 Authentication
-
-The application uses Supabase Authentication with the following features:
-
-- Email/Password sign-in and sign-up
-- Password reset via email
-- Remember me functionality
-- Protected routes based on user roles
-
-## 🚢 Deployment
-
-### Via Lovable
-
-1. Open [Lovable](https://lovable.dev/projects/e569bdca-1959-45fb-9c1e-460ae06bf4c9)
-2. Click **Share → Publish**
-
-### Custom Domain
-
-1. Navigate to **Project → Settings → Domains**
-2. Click **Connect Domain**
-3. Follow the DNS configuration instructions
-
-## 🔄 Development Workflow
-
-### Making Changes via Lovable
-
-Changes made in Lovable are automatically committed to the connected GitHub repository.
-
-### Making Changes via IDE
-
-1. Clone the repository
-2. Make changes locally
-3. Push to GitHub
-4. Changes sync automatically to Lovable
-
-## 📝 Environment Variables
-
-The application uses Supabase for backend services. The following are configured automatically:
-
-- `SUPABASE_URL` - Supabase project URL
-- `SUPABASE_ANON_KEY` - Supabase anonymous key
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is private and proprietary.
-
-## 🆘 Support
-
-For support, please contact the project administrator or open an issue in the GitHub repository.
+**Kody błędów:**
+| Kod | Opis |
+|-----|------|
+| 401 | Brak lub nieprawidłowy token JWT |
+| 403 | Brak wymaganych uprawnień |
+| 404 | Reklamacja nie znaleziona |
+| 400 | Brak ID reklamacji |
 
 ---
 
-Built with ❤️ using [Lovable](https://lovable.dev)
+### GET Complaints by Serial - Wyszukaj reklamacje po numerze seryjnym
+
+Wyszukuje listę reklamacji pasujących do numeru seryjnego urządzenia. **Dostęp: Administrator, Pracownik, Serwisant.**
+
+**Endpoint:** `GET /functions/v1/get-complaints-by-serial?serial_number=ABC123`
+
+lub
+
+**Endpoint:** `POST /functions/v1/get-complaints-by-serial`
+
+**Nagłówki:**
+```
+Authorization: Bearer <jwt-token>
+Content-Type: application/json
+```
+
+**Query Parameters (GET):**
+| Parametr | Typ | Wymagany | Opis |
+|----------|-----|----------|------|
+| serial_number | string | Tak | Numer seryjny urządzenia (wyszukiwanie częściowe) |
+
+**Request Body (POST):**
+```json
+{
+  "serial_number": "ABC123"
+}
+```
+
+**Response (200):**
+```json
+{
+  "complaints": [
+    {
+      "id": "uuid",
+      "internal_complaint_number": "string | null",
+      "device_serial_number": "string",
+      "device_type": "string",
+      "status": "submitted | received | in_progress | completed | verified | awaiting_shipment | cancelled",
+      "warranty_repair": "boolean",
+      "damage_description": "string",
+      "reported_problem": "string | null",
+      "diagnosis": "string | null",
+      "repair_cost": "number | null",
+      "submission_date": "timestamp",
+      "completion_date": "timestamp | null",
+      "assigned_technician_id": "uuid | null",
+      "return_first_name": "string",
+      "return_last_name": "string",
+      "return_email": "string",
+      "return_phone": "string"
+    }
+  ],
+  "count": 1
+}
+```
+
+**Kody błędów:**
+| Kod | Opis |
+|-----|------|
+| 401 | Brak lub nieprawidłowy token JWT |
+| 403 | Brak wymaganych uprawnień |
+| 400 | Brak parametru serial_number |
+| 500 | Błąd serwera |
+
+**Przykłady użycia:**
+
+```bash
+# GET request
+curl -X GET \
+  'https://hcvgidsazfbeqbkszqdf.supabase.co/functions/v1/get-complaints-by-serial?serial_number=ABC123' \
+  -H 'Authorization: Bearer <token>'
+
+# POST request
+curl -X POST \
+  'https://hcvgidsazfbeqbkszqdf.supabase.co/functions/v1/get-complaints-by-serial' \
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{"serial_number": "ABC123"}'
+```
+
+---
+
+## 🔐 Autentykacja
+
+Aplikacja wykorzystuje Supabase Authentication z następującymi funkcjami:
+
+- Logowanie i rejestracja przez email/hasło
+- Reset hasła przez email
+- Funkcja "Zapamiętaj mnie"
+- Chronione trasy oparte na rolach użytkowników
+
+### Testowe konta
+
+| Email | Rola |
+|-------|------|
+| admin@neptis.pl | main_administrator |
+| employee@neptis.pl | employee |
+| technician@neptis.pl | service_technician |
+
+## 🚢 Wdrożenie
+
+### Przez Lovable
+
+1. Otwórz [Lovable](https://lovable.dev/projects/e569bdca-1959-45fb-9c1e-460ae06bf4c9)
+2. Kliknij **Share → Publish**
+
+### Własna domena
+
+1. Przejdź do **Project → Settings → Domains**
+2. Kliknij **Connect Domain**
+3. Postępuj zgodnie z instrukcjami konfiguracji DNS
+
+## 🔄 Przepływ pracy
+
+### Zmiany przez Lovable
+
+Zmiany wprowadzone w Lovable są automatycznie commitowane do podłączonego repozytorium GitHub.
+
+### Zmiany przez IDE
+
+1. Sklonuj repozytorium
+2. Wprowadź zmiany lokalnie
+3. Wypchnij do GitHub
+4. Zmiany synchronizują się automatycznie do Lovable
+
+## 📝 Zmienne środowiskowe
+
+Aplikacja używa Supabase jako backendu. Następujące zmienne są konfigurowane automatycznie:
+
+- `SUPABASE_URL` - URL projektu Supabase
+- `SUPABASE_ANON_KEY` - Klucz anonimowy Supabase
+- `SUPABASE_SERVICE_ROLE_KEY` - Klucz serwisowy (tylko Edge Functions)
+
+## 🤝 Wkład w projekt
+
+1. Sforkuj repozytorium
+2. Utwórz branch funkcjonalności (`git checkout -b feature/nowa-funkcja`)
+3. Zacommituj zmiany (`git commit -m 'Dodaj nową funkcję'`)
+4. Wypchnij branch (`git push origin feature/nowa-funkcja`)
+5. Otwórz Pull Request
+
+## 📄 Licencja
+
+Ten projekt jest prywatny i własnościowy.
+
+## 🆘 Wsparcie
+
+W razie potrzeby wsparcia skontaktuj się z administratorem projektu lub otwórz issue w repozytorium GitHub.
+
+---
+
+Zbudowano z ❤️ używając [Lovable](https://lovable.dev)
