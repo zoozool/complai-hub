@@ -2,3 +2,6 @@ project_id = "hcvgidsazfbeqbkszqdf"
 
 [functions.get-complaint]
 verify_jwt = false
+
+[functions.get-complaints-by-serial]
+verify_jwt = false
