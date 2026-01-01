@@ -29,15 +29,15 @@ const Index = () => {
             <div className="flex items-center">
               <Shield className="h-8 w-8 text-primary mr-3" />
               <div>
-                <h1 className="text-xl font-bold text-primary-foreground">ComplaiHub</h1>
-                <p className="text-sm text-primary-foreground/70">Product Complaint Portal</p>
+              <h1 className="text-xl font-bold text-primary-foreground">ComplaiHub</h1>
+                <p className="text-sm text-primary-foreground/70">Portal Reklamacji Produktów</p>
               </div>
             </div>
             <Button 
               onClick={() => navigate('/auth')}
               className="bg-primary hover:bg-primary-hover"
             >
-              Sign In
+              Zaloguj się
             </Button>
           </div>
         </div>
@@ -47,12 +47,12 @@ const Index = () => {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold text-foreground mb-6">
-              Professional Complaint Management System
+          <h2 className="text-4xl font-bold text-foreground mb-6">
+              Profesjonalny System Zarządzania Reklamacjami
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Streamline your device repair process with our comprehensive complaint tracking portal. 
-              Submit complaints, track repair status, and manage returns efficiently.
+              Usprawnij proces naprawy urządzeń dzięki naszemu kompleksowemu portalowi śledzenia reklamacji. 
+              Zgłaszaj reklamacje, śledź status naprawy i zarządzaj zwrotami efektywnie.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -60,7 +60,7 @@ const Index = () => {
                 onClick={() => navigate('/auth')}
                 className="bg-gradient-primary"
               >
-                Get Started
+                Rozpocznij
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
@@ -68,7 +68,7 @@ const Index = () => {
                 variant="outline"
                 onClick={() => navigate('/auth')}
               >
-                Learn More
+                Dowiedz się więcej
               </Button>
             </div>
           </div>
@@ -79,9 +79,9 @@ const Index = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-foreground mb-4">Why Choose ComplaiHub?</h3>
+            <h3 className="text-3xl font-bold text-foreground mb-4">Dlaczego ComplaiHub?</h3>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our platform provides everything you need to manage device complaints efficiently and transparently.
+              Nasza platforma zapewnia wszystko, czego potrzebujesz do efektywnego i przejrzystego zarządzania reklamacjami urządzeń.
             </p>
           </div>
 
@@ -89,11 +89,11 @@ const Index = () => {
             <Card className="shadow-card">
               <CardHeader className="text-center">
                 <FileText className="h-12 w-12 text-primary mx-auto mb-4" />
-                <CardTitle>Easy Submission</CardTitle>
+                <CardTitle>Łatwe zgłaszanie</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center">
-                  Submit complaints quickly with our intuitive form system. Track device types, warranty status, and package contents.
+                  Szybko zgłaszaj reklamacje dzięki intuicyjnemu systemowi formularzy. Śledź typy urządzeń, status gwarancji i zawartość paczki.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -101,11 +101,11 @@ const Index = () => {
             <Card className="shadow-card">
               <CardHeader className="text-center">
                 <CheckCircle className="h-12 w-12 text-success mx-auto mb-4" />
-                <CardTitle>Real-time Tracking</CardTitle>
+                <CardTitle>Śledzenie w czasie rzeczywistym</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center">
-                  Monitor your complaint status, tracking numbers, and repair progress in real-time through your dashboard.
+                  Monitoruj status reklamacji, numery przesyłek i postęp naprawy w czasie rzeczywistym przez swój panel.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -113,11 +113,11 @@ const Index = () => {
             <Card className="shadow-card">
               <CardHeader className="text-center">
                 <Users className="h-12 w-12 text-info mx-auto mb-4" />
-                <CardTitle>Business Support</CardTitle>
+                <CardTitle>Wsparcie dla firm</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center">
-                  Dedicated business partner features with internal complaint numbers and pickup scheduling capabilities.
+                  Dedykowane funkcje dla partnerów biznesowych z wewnętrznymi numerami reklamacji i możliwością planowania odbiorów.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -125,11 +125,11 @@ const Index = () => {
             <Card className="shadow-card">
               <CardHeader className="text-center">
                 <Truck className="h-12 w-12 text-warning mx-auto mb-4" />
-                <CardTitle>Pickup Management</CardTitle>
+                <CardTitle>Zarządzanie odbiorami</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center">
-                  Business partners can schedule device pickups with pre-filled company information for streamlined logistics.
+                  Partnerzy biznesowi mogą planować odbiory urządzeń z wypełnionymi danymi firmy dla usprawnienia logistyki.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -141,17 +141,17 @@ const Index = () => {
       <section className="py-16 bg-gradient-card">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h3 className="text-3xl font-bold text-foreground mb-4">
-            Ready to Get Started?
+            Gotowy, aby rozpocząć?
           </h3>
           <p className="text-muted-foreground mb-8">
-            Join hundreds of customers and business partners who trust ComplaiHub for their device repair needs.
+            Dołącz do setek klientów i partnerów biznesowych, którzy zaufali ComplaiHub w zakresie napraw urządzeń.
           </p>
           <Button 
             size="lg" 
             onClick={() => navigate('/auth')}
             className="bg-gradient-primary"
           >
-            Sign Up Today
+            Zarejestruj się
           </Button>
         </div>
       </section>
@@ -166,7 +166,7 @@ const Index = () => {
             </div>
           </div>
           <p className="text-center text-primary-foreground/70 mt-4">
-            Professional complaint management for device repairs and service tracking.
+            Profesjonalne zarządzanie reklamacjami dla napraw urządzeń i śledzenia serwisu.
           </p>
         </div>
       </footer>
