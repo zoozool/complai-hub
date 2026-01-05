@@ -47,7 +47,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div className="min-h-screen flex w-full">
         <header className="fixed top-0 left-0 right-0 h-12 flex items-center border-b bg-background z-50">
           <SidebarTrigger className="ml-2" />
-          <h1 className="ml-4 font-semibold">Admin Panel</h1>
+          <h1 className="ml-4 font-semibold">Panel administracyjny</h1>
         </header>
 
         <AdminSidebar />

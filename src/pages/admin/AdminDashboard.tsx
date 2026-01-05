@@ -94,8 +94,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error fetching complaints:', error);
       toast({
-        title: "Error",
-        description: "Failed to fetch complaints",
+        title: "Błąd",
+        description: "Nie udało się pobrać reklamacji",
         variant: "destructive",
       });
     } finally {
@@ -117,19 +117,19 @@ export default function AdminDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {isTechnician() ? 'Urządzenia do naprawy' : 'Complaint Management'}
+              {isTechnician() ? 'Urządzenia do naprawy' : 'Zarządzanie reklamacjami'}
             </h1>
             <p className="text-muted-foreground">
               {isTechnician() 
                 ? 'Urządzenia ze statusem "W serwisie" lub "W naprawie"'
-                : 'Manage all complaints in the system'
+                : 'Zarządzaj wszystkimi reklamacjami w systemie'
               }
             </p>
           </div>
           {isAdmin() && (
             <Button onClick={() => setShowCreateDialog(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Create Complaint
+              Utwórz reklamację
             </Button>
           )}
         </div>

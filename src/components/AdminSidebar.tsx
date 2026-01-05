@@ -30,7 +30,7 @@ export function AdminSidebar() {
   const getMenuItems = () => {
     const items: Array<{ title: string; url: string; icon: typeof ClipboardList }> = [
       { 
-        title: "Dashboard", 
+        title: "Panel główny", 
         url: "/admin/dashboard", 
         icon: ClipboardList,
       },
@@ -39,12 +39,12 @@ export function AdminSidebar() {
     if (isAdmin()) {
       items.push(
         { 
-          title: "User Management", 
+          title: "Zarządzanie użytkownikami", 
           url: "/admin/users", 
           icon: Users,
         },
         { 
-          title: "Settings", 
+          title: "Ustawienia", 
           url: "/admin/settings", 
           icon: Settings,
         }
@@ -74,12 +74,12 @@ export function AdminSidebar() {
     if (isTechnician()) {
       items.push(
         {
-          title: "My Assignments",
+          title: "Moje zadania",
           url: "/admin/assignments",
           icon: Wrench,
         },
         {
-          title: "Warranty Repair",
+          title: "Naprawy gwarancyjne",
           url: "/admin/warranty-repairs",
           icon: ShieldCheck,
         }
@@ -104,7 +104,7 @@ export function AdminSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>
             <span className="text-xs text-muted-foreground uppercase tracking-wide">
-              {role?.replace('_', ' ')} Panel
+              Panel administracyjny
             </span>
           </SidebarGroupLabel>
 
@@ -124,7 +124,7 @@ export function AdminSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign Out</span>
+                  <span>Wyloguj się</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
